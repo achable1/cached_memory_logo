@@ -5,18 +5,18 @@ import "core/constants/theme/material_theme.dart";
 import "core/constants/theme/util.dart";
 import "core/routes/app_router.dart";
 
-final _appRouter = AppRouter(); 
+final _appRouter = AppRouter();   
 
-/// [CachedMemoryLogoApp] is the entry point of the application.
-class CachedMemoryLogoApp extends StatelessWidget {
-  /// [CachedMemoryLogoApp] is the entry point of the application.
-  const CachedMemoryLogoApp({super.key});
+/// [ExampleApp] is the entry point of the application.
+class ExampleApp extends StatelessWidget {
+  /// [ExampleApp] is the entry point of the application.
+  const ExampleApp({super.key});
 
   @override
   Widget build(BuildContext context) =>
      FlavorBanner(
       child: MaterialApp.router(
-        title: "CachedMemoryLogo",
+        title: "Example",
         debugShowCheckedModeBanner: false,
 
         //Theming  

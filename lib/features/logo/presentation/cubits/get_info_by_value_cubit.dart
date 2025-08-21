@@ -6,16 +6,29 @@ import "../../../../core/errors/failure.dart";
 import "../../../../core/extensions/cubit_extension.dart";
 
 /// Base cubit for getting information from a use case
-abstract class GetInfoCubit<T> extends Cubit<StateMixin<T>> {
+abstract class GetInfoByValueCubit<T, J> extends Cubit<StateMixin<T>> {
   /// Base cubit for getting information from a use case
-  GetInfoCubit() : super(StateMixin.loading()) {
-    getInfo();
-  }
+  GetInfoByValueCubit() : super(StateMixin.initial());
+
+  /// The value to use as an identifier for the retrieval of the information
+  J? value;
 
   /// Fetch the information from a use case
   Future<Either<Failure, T>> getInfo() async {
     try {
       safeEmit(StateMixin.loading());
+
+      if (value == null) {
+        safeEmit(StateMixin.initial());
+
+        return Left(
+          AppFailure(
+            title: "No value provided",
+            message: "Please provide a value to get the information",
+          ),
+        );
+      }
+
       final response = await callUseCase();
 
       response.fold(
@@ -46,4 +59,10 @@ abstract class GetInfoCubit<T> extends Cubit<StateMixin<T>> {
 
   /// Use case to call
   Future<Either<Failure, T>> callUseCase();
+
+  /// Sets the value and refreshes the information
+  void setValueAndRefresh(J value) {
+    this.value = value;
+    getInfo();
+  }
 }

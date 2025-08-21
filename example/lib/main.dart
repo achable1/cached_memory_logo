@@ -1,8 +1,8 @@
-import "package:cached_memory_logo/core/config/dependency_injection.dart";
-import "package:cached_memory_logo/core/config/environment_config.dart";
 import "package:flutter/material.dart";
 
-import "cached_memory_logo_app.dart";
+import "core/config/dependency_injection.dart";
+import "core/config/environment_config.dart";
+import "example_app.dart";
 
 void main() async {
   EnvironmentConfig.init(
@@ -11,5 +11,5 @@ void main() async {
 
   await DependencyInjection.init();
 
-  runApp(const CachedMemoryLogoApp());
+  runApp(const ExampleApp());
 }

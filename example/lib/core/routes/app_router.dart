@@ -1,10 +1,16 @@
 import "package:auto_route/auto_route.dart";
 
+import "app_router.gr.dart";
+
 /// App router.
 @AutoRouterConfig(replaceInRouteName: "Page,Route")
 class AppRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
-        /// routes go here
+        AutoRoute(
+          page: HomeRoute.page,
+          path: "/home",
+          initial: true,
+        ),
       ];
 }
