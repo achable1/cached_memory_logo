@@ -3,6 +3,7 @@ import "package:flutter/services.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 
 import "../../../../core/widgets/cubit_state_mixin_builder.dart";
+import "../../data/models/params/logo_params.dart";
 import "../cubits/logo_cubit.dart";
 import "shimmer_logo.dart";
 
@@ -43,7 +44,12 @@ class CachedMemoryLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BlocProvider(
-        create: (context) => LogoCubit(),
+        create: (context) => LogoCubit(
+          params: LogoParams(
+            path: path,
+            fetchUrl: fetchUrl,
+          ),
+        ),
         child: Builder(
           builder: (context) => CubitWidgetStateLoader<LogoCubit, Uint8List>(
             onSuccess: (data) => Image.memory(

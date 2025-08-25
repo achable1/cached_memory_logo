@@ -1,11 +1,11 @@
 import "package:fpdart/fpdart.dart" show Either;
 
-import "../../../../core/constants/classes/params.dart";
 import "../../../../core/errors/failure.dart";
 
 import "../../business/repositories/logo_repository.dart";
 import "../data_sources/local/logo_local_data_source.dart";
 import "../data_sources/remote/logo_remote_data_source.dart";
+import "../models/params/logo_params.dart";
 
 /// Data operations for the Logo collection
 class LogoRepositoryImpl implements LogoRepository {
@@ -27,7 +27,7 @@ class LogoRepositoryImpl implements LogoRepository {
 
   @override
   Future<Either<Failure, String>> getBase64Image({
-    required NoParams params,
+    required LogoParams params,
   }) {
     // TODO: implement getBase64Image
     throw UnimplementedError();

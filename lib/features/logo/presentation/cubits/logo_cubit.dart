@@ -7,20 +7,26 @@ import "../../../../core/errors/failure.dart";
 import "../../business/repositories/logo_repository.dart";
 import "../../business/use_cases/get_base_64_logo.dart";
 import "../../data/models/params/logo_params.dart";
-import "get_info_by_value_cubit.dart";
+import "get_info_cubit.dart";
 
 /// A cubit that manages the state of the logo.
-class LogoCubit extends GetInfoByValueCubit<Uint8List, LogoParams> {
+class LogoCubit extends GetInfoCubit<Uint8List> {
+  final LogoParams params;
+
+  LogoCubit({
+    required this.params,
+  });
+
   @override
   Future<Either<Failure, Uint8List>> callUseCase() {
     GetBase64Logo(
       logoRepository: GetIt.I<LogoRepository>(),
-    ).call(params: value ?? LogoParams());
+    ).call(
+      params: params,
+    );
 
     throw UnimplementedError(
       "The callUseCase method is not implemented in LogoCubit.",
     );
-
   }
-
 }
