@@ -17,7 +17,6 @@ class HomePage extends StatelessWidget {
           create: (context) => HomeCubit(),
           child: const CachedMemoryLogo(
             path: "logos/oxxo.png",
-            fetchUrl: "www.gotravex.com/api/",
           ),
         ),
       );

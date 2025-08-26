@@ -1,0 +1,14 @@
+targets:
+  $default:
+    sources:
+      - lib/**
+      - test/**
+      - web/**
+      - windows/**
+      - macos/**
+      - linux/**
+      - android/**
+      - ios/**
+      - assets/**
+      - '!example/**'
+      - '!**/.plugin_symlinks/**'

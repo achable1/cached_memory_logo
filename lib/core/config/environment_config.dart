@@ -5,10 +5,10 @@ import "package:flutter_flavor/flutter_flavor.dart";
 ///
 /// This class is used to set the environment variables for the application.
 class EnvironmentConfig {
-  /// Key to access a resource of the environment.
+  /// Key to access a the sources for logos
   ///
-  /// example: The key to access the api url.
-  static const String apiUrlKey = "API_URL";
+  /// example: The key to access the fetch url.
+  static String fetchUrl = "<FETCH_URL>";
 
   /// Initializes the environment configuration.
   static void init({
@@ -28,16 +28,16 @@ class EnvironmentConfig {
         Flavor.production => _prodVariables,
       };
 
-  static const Map<String, dynamic> _localVariables = {
-    apiUrlKey: "",
+  static final Map<String, dynamic> _localVariables = {
+    fetchUrl: "",
   };
 
-  static const Map<String, dynamic> _testVariables = {
-    apiUrlKey: "",
+  static final Map<String, dynamic> _testVariables = {
+    fetchUrl: "",
   };
 
-  static const Map<String, dynamic> _prodVariables = {
-    apiUrlKey: "",
+  static final Map<String, dynamic> _prodVariables = {
+    fetchUrl: "",
   };
 }
 
