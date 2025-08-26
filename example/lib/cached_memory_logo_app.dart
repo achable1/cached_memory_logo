@@ -19,7 +19,7 @@ class CachedMemoryLogoApp extends StatelessWidget {
         title: "CachedMemoryLogo",
         debugShowCheckedModeBanner: false,
 
-        //Theming  
+        //Theming
         themeMode: ThemeMode.system,
             theme: MaterialTheme(createTextTheme(context, "Poppins", "Poppins"),)
                 .light(),
