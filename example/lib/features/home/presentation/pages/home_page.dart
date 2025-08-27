@@ -13,10 +13,19 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: const Text("Home"),
+        ),
         body: BlocProvider(
           create: (context) => HomeCubit(),
-          child: const CachedMemoryLogo(
-            path: "logos/oxxo.png",
+          child: const Column(
+            children: [
+              CachedMemoryLogo(
+                path: "logos/oxxo.png",
+                height: 100,
+                width: 100,
+              ),
+            ],
           ),
         ),
       );

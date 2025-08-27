@@ -1,5 +1,7 @@
+import "dart:convert";
 import "dart:typed_data";
 
+import "package:flutter/material.dart" show debugPrint;
 import "package:fpdart/fpdart.dart";
 import "package:get_it/get_it.dart";
 
@@ -11,22 +13,31 @@ import "get_info_cubit.dart";
 
 /// A cubit that manages the state of the logo.
 class LogoCubit extends GetInfoCubit<Uint8List> {
-  final LogoParams params;
-
+  /// Creates a [LogoCubit].
   LogoCubit({
     required this.params,
   });
 
-  @override
-  Future<Either<Failure, Uint8List>> callUseCase() {
-    GetBase64Logo(
-      logoRepository: GetIt.I<LogoRepository>(),
-    ).call(
-      params: params,
-    );
+  /// The parameters for the logo.
+  final LogoParams params;
 
-    throw UnimplementedError(
-      "The callUseCase method is not implemented in LogoCubit.",
+  @override
+  Future<Either<Failure, Uint8List>> callUseCase() async {
+    try {
+      final result = await GetBase64Logo(
+        logoRepository: GetIt.I.get<LogoRepository>(),
+      ).call(
+        params: params,
+      );
+    return result.fold(
+      Left.new,
+      (r) => Right(
+        base64Decode(r),
+      ),
     );
+  } catch (e) {
+    debugPrint("Error in LogoCubit.callUseCase: $e");
+    return Left(AppFailure.unexpected(e.toString()));
   }
+}
 }

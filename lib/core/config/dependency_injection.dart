@@ -14,29 +14,37 @@ import "../services/hive/hive_registrar.g.dart";
 class DependencyInjection {
   /// Inject the services in the application
   static Future<void> init() async {
+    debugPrint("DependencyInjection.init");
     WidgetsFlutterBinding.ensureInitialized();
-    await registerServices();
 
     const errorPercentage = 0;
     const maxWaitTime = 2000;
 
-    GetIt.I.registerSingleton<LogoRepository>(
-      LogoRepositoryImpl(
-        localDataSource: LogoLocalDataSourceImpl(),
-        remoteDataSource: LogoRemoteDataMock(
-          errorPercentage: errorPercentage,
-          maxWaitTime: maxWaitTime,
+      GetIt.I.registerSingleton<LogoRepository>(
+        LogoRepositoryImpl(
+          localDataSource: LogoLocalDataSourceImpl(),
+          remoteDataSource: LogoRemoteDataMock(
+            errorPercentage: errorPercentage,
+            maxWaitTime: maxWaitTime,
+          ),
         ),
-      ),
-    );
+      );
+    await registerServices();
+    try {
+    } catch (e) {
+      debugPrint("Error in DependencyInjection.init: $e");
+    }
   }
 
   /// Registers the services for the application
   static Future<void> registerServices() async {
-    // Hive
-    await Hive.initFlutter();
-    Hive.registerAdapters();
-    await Hive.openBox<LogoTable>(logoBox);
+    try {
+      // Hive
+      await Hive.initFlutter();
+      Hive.registerAdapters();
+      await Hive.openBox<LogoTable>(logoBox);
+    } catch (e) {
+      debugPrint("Error registering services: $e");
+    }
   }
-
 }

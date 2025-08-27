@@ -6,14 +6,24 @@ import "../../../../core/extensions/theme_extension.dart";
 /// A widget that displays a shimmering logo effect.
 class ShimmerLogo extends StatelessWidget {
   /// Creates a [ShimmerLogo] widget.
-  const ShimmerLogo({super.key});
+  const ShimmerLogo({
+    this.height,
+    this.width,
+    super.key,
+  });
+
+  /// The height of the shimmer effect.
+  final double? height;
+
+  /// The width of the shimmer effect.
+  final double? width;
 
   @override
   Widget build(BuildContext context) => FittedBox(
     fit: BoxFit.cover,
     child: FadeShimmer(
-          height: double.infinity,
-          width: double.infinity,
+          height: height ?? 0,
+          width: width ?? 0,
           highlightColor: _highlightColor(context),
           baseColor: _baseColor(context),
           fadeTheme: _fadeTheme(context),

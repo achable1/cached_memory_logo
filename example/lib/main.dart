@@ -1,3 +1,4 @@
+import "package:cached_memory_logo/cached_memory_package.dart";
 import "package:flutter/material.dart";
 
 import "core/config/dependency_injection.dart";
@@ -9,7 +10,7 @@ void main() async {
     flavor: Flavor.production,
   );
 
-  await DependencyInjection.init();
+  await CachedMemoryPackage.init(fetchUrl: "www.example.com");
 
   runApp(const ExampleApp());
 }

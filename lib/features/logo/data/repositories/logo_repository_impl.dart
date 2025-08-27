@@ -1,7 +1,7 @@
-import "package:fpdart/fpdart.dart" show Either;
+import "package:fpdart/fpdart.dart" show Either, Right;
 
+import "../../../../core/errors/error_handler.dart";
 import "../../../../core/errors/failure.dart";
-
 import "../../business/repositories/logo_repository.dart";
 import "../data_sources/local/logo_local_data_source.dart";
 import "../data_sources/remote/logo_remote_data_source.dart";
@@ -28,8 +28,22 @@ class LogoRepositoryImpl implements LogoRepository {
   @override
   Future<Either<Failure, String>> getBase64Image({
     required LogoParams params,
-  }) {
-    // TODO: implement getBase64Image
-    throw UnimplementedError();
+  }) async {
+    final logo = await localDataSource.getLogoByPath(params.path);
+    if (logo != null) {
+      return Right(logo.imageBase64);
+    } else {
+      return ErrorHandler.handleApiCall(
+        () async {
+          final response = await remoteDataSource.getBase64Logo(params: params);
+
+          await localDataSource.saveLogo(
+            params.toTable(response),
+          );
+
+          return response;
+        },
+      );
+    }
   }
 }
