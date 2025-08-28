@@ -46,33 +46,25 @@ class CachedMemoryLogo extends StatelessWidget {
           ),
         ),
         child: Builder(
-          builder: (context) {
-            debugPrint("Building CachedMemoryLogo");
-            return CubitWidgetStateLoader<LogoCubit, Uint8List>(
-              onSuccess: (data) {
-                debugPrint("Logo loaded successfully");
-                return Image.memory(
-                  data,
-                  errorBuilder: errorBuilder,
+          builder: (context) => CubitWidgetStateLoader<LogoCubit, Uint8List>(
+            onSuccess: (data) => Image.memory(
+              data,
+              errorBuilder: errorBuilder,
+              height: height,
+              width: width,
+            ),
+            onFailure: (error) =>
+                fallbackWidget ??
+                ColoredBox(
+                  color: Colors.grey.shade300,
+                  child: const SizedBox(),
+                ),
+            onLoading: loadingWidget ??
+                ShimmerLogo(
                   height: height,
                   width: width,
-                );
-              },
-              onFailure: (error) {
-                debugPrint("Error loading logo");
-                return fallbackWidget ??
-                    /* ColoredBox( TODO: Revert this after check exceptions
-                      color: Colors.grey.shade300,
-                      child: const SizedBox(),
-                    ); */
-                    Text(error.message);
-              },
-              onLoading: loadingWidget ?? ShimmerLogo(
-                height: height,
-                width: width,
-              ),
-            );
-          },
+                ),
+          ),
         ),
       );
 }

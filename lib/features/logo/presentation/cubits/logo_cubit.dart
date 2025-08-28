@@ -1,7 +1,6 @@
 import "dart:convert";
 import "dart:typed_data";
 
-import "package:flutter/material.dart" show debugPrint;
 import "package:fpdart/fpdart.dart";
 import "package:get_it/get_it.dart";
 
@@ -29,15 +28,24 @@ class LogoCubit extends GetInfoCubit<Uint8List> {
       ).call(
         params: params,
       );
-    return result.fold(
-      Left.new,
-      (r) => Right(
-        base64Decode(r),
-      ),
-    );
-  } catch (e) {
-    debugPrint("Error in LogoCubit.callUseCase: $e");
-    return Left(AppFailure.unexpected(e.toString()));
+      return result.fold(
+        Left.new,
+        (r) {
+          try {
+            return Right(
+              base64Decode(r),
+            );
+          } catch (e) {
+            return Left(
+              AppFailure.unexpected(
+                "El string no es un formato válido de base64",
+              ),
+            );
+          }
+        },
+      );
+    } catch (e) {
+      return Left(AppFailure.unexpected(e.toString()));
+    }
   }
-}
 }

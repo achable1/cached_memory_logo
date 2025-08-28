@@ -1,3 +1,4 @@
+import "package:flutter/material.dart" show debugPrint;
 import "package:fpdart/fpdart.dart" show Either, Right;
 
 import "../../../../core/errors/error_handler.dart";
@@ -31,6 +32,7 @@ class LogoRepositoryImpl implements LogoRepository {
   }) async {
     final logo = await localDataSource.getLogoByPath(params.path);
     if (logo != null) {
+      debugPrint("Logo found in local database with path: ${params.path}: ${logo.imageBase64}");
       return Right(logo.imageBase64);
     } else {
       return ErrorHandler.handleApiCall(

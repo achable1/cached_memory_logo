@@ -6,6 +6,6 @@ class DependencyInjection {
   /// Inject the services in the application
   static Future<void> init() async {
     WidgetsFlutterBinding.ensureInitialized();
-    CachedMemoryPackage.init(fetchUrl: "www.example.com");
+    await CachedMemoryPackage.init(fetchUrl: "www.example.com");
   }
 }

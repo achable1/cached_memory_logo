@@ -18,14 +18,27 @@ class HomePage extends StatelessWidget {
         ),
         body: BlocProvider(
           create: (context) => HomeCubit(),
-          child: const Column(
-            children: [
-              CachedMemoryLogo(
-                path: "logos/oxxo.png",
-                height: 100,
-                width: 100,
-              ),
-            ],
+          child: const Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CachedMemoryLogo(
+                  path: "logos/oxxo.png",
+                  height: 100,
+                  width: 100,
+                ),
+                CachedMemoryLogo(
+                  path: "logos/white.png",
+                  height: 100,
+                  width: 100,
+                ),
+                CachedMemoryLogo(
+                  path: "logos/another_test.png",
+                  height: 100,
+                  width: 100,
+                ),
+              ],
+            ),
           ),
         ),
       );
