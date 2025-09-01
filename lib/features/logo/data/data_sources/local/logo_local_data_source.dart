@@ -17,7 +17,6 @@ abstract class LogoLocalDataSource {
 
 /// Local data source for the Logo collection
 class LogoLocalDataSourceImpl implements LogoLocalDataSource {
-
   /// Fetches a logo by its path from the local database.
   @override
   Future<LogoTable?> getLogoByPath(String path) async =>
@@ -26,7 +25,12 @@ class LogoLocalDataSourceImpl implements LogoLocalDataSource {
   /// Saves a logo to the local database.
   @override
   Future<void> saveLogo(LogoTable logo) async {
-    await Hive.box<LogoTable>(logoBox).put(logo.path, logo);
+    final logosBox = Hive.box<LogoTable>(logoBox);
+
+    if (logosBox.containsKey(logo.path)) {
+      return;
+    }
+    await logosBox.put(logo.path, logo);
   }
 
   /// Deletes a logo from the local database.

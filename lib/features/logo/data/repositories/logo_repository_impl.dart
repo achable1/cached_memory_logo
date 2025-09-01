@@ -1,4 +1,3 @@
-import "package:flutter/material.dart" show debugPrint;
 import "package:fpdart/fpdart.dart" show Either, Right;
 
 import "../../../../core/errors/error_handler.dart";
@@ -32,20 +31,27 @@ class LogoRepositoryImpl implements LogoRepository {
   }) async {
     final logo = await localDataSource.getLogoByPath(params.path);
     if (logo != null) {
-      debugPrint("Logo found in local database with path: ${params.path}: ${logo.imageBase64}");
       return Right(logo.imageBase64);
+    } else if (logo != null && logo.monthSaved < DateTime.now().month) {
+      await localDataSource.deleteLogo(params.path);
+      return _fetchAndSaveLogo(params);
     } else {
-      return ErrorHandler.handleApiCall(
+      return _fetchAndSaveLogo(params);
+    }
+  }
+
+  Future<Either<Failure, String>> _fetchAndSaveLogo(LogoParams params) =>
+      ErrorHandler.handleApiCall(
         () async {
-          final response = await remoteDataSource.getBase64Logo(params: params);
-
-          await localDataSource.saveLogo(
-            params.toTable(response),
+          final response = await remoteDataSource.getBase64Logo(
+            params: params,
           );
-
+          await localDataSource.saveLogo(
+            params.toTable(
+              response,
+            ),
+          );
           return response;
         },
       );
-    }
-  }
 }

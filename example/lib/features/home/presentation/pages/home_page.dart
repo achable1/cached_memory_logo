@@ -23,15 +23,17 @@ class HomePage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 CachedMemoryLogo(
-                  path: "logos/oxxo.png",
+                  path: "logos/costco.png",
                   height: 100,
                   width: 100,
                 ),
+                SizedBox(height: 20),
                 CachedMemoryLogo(
-                  path: "logos/white.png",
+                  path: "logos/costco.png",
                   height: 100,
                   width: 100,
                 ),
+                SizedBox(height: 20),
                 CachedMemoryLogo(
                   path: "logos/another_test.png",
                   height: 100,
