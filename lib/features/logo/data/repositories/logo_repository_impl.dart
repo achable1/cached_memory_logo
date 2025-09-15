@@ -10,7 +10,7 @@ import "../models/params/logo_params.dart";
 /// Data operations for the Logo collection
 class LogoRepositoryImpl implements LogoRepository {
   /// Data operations for the Logo collection
-  LogoRepositoryImpl({
+  const LogoRepositoryImpl({
     required this.remoteDataSource,
     required this.localDataSource,
     // required this.networkInfo,
@@ -29,7 +29,9 @@ class LogoRepositoryImpl implements LogoRepository {
   Future<Either<Failure, String>> getBase64Image({
     required LogoParams params,
   }) async {
-    final logo = await localDataSource.getLogoByPath(params.path);
+    final logo = await localDataSource.getLogoByPath(
+      params.path,
+    );
     if (logo != null) {
       return Right(logo.imageBase64);
     } else if (logo != null && logo.monthSaved < DateTime.now().month) {
