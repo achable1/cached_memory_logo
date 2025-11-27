@@ -1,5 +1,6 @@
+import "package:dio/dio.dart";
+
 import "app_exception.dart";
-import "connection/http_call_exception.dart";
 
 /// The abstract class for the failures in the application
 abstract class Failure {
@@ -38,37 +39,17 @@ class HttpCallFailure extends Failure {
   HttpCallFailure({
     required super.message,
     required super.title,
-    required super.level,
+    super.level = FailureLevel.error,
   });
 
   /// Create a [HttpCallFailure] from a [HttpCallException]
-  factory HttpCallFailure.fromException(HttpCallException exception) =>
+  factory HttpCallFailure.fromException(DioException exception) =>
       HttpCallFailure(
-        title: exception.title,
-        message: exception.message,
-        level: _getLevel(exception.type),
+        title: exception.response?.statusCode == 404
+            ? "Logo no encontrado"
+            : "Error",
+        message: exception.message ?? "Ocurrió un error al realizar la llamada",
       );
-
-  static FailureLevel _getLevel(HttpExceptions type) {
-    switch (type) {
-      case HttpExceptions.connectionError:
-      case HttpExceptions.clientOffline:
-        return FailureLevel.warning;
-      case HttpExceptions.serverDown:
-      case HttpExceptions.serverError:
-        return FailureLevel.error;
-      case HttpExceptions.unauthorized:
-      case HttpExceptions.expiredToken:
-        return FailureLevel.warning;
-      case HttpExceptions.clientError:
-      case HttpExceptions.badRequest:
-        return FailureLevel.warning;
-      case HttpExceptions.cancelRequest:
-      case HttpExceptions.other:
-      case HttpExceptions.badCertificate:
-        return FailureLevel.info;
-      }
-  }
 }
 
 /// Failure used for the application side

@@ -2,7 +2,6 @@ import "package:dio/dio.dart";
 import "package:fpdart/fpdart.dart";
 
 import "app_exception.dart";
-import "connection/http_call_exception.dart";
 import "failure.dart";
 
 /// The [ErrorHandler] class is responsible for handling the exceptions
@@ -17,12 +16,10 @@ class ErrorHandler {
   ) async {
     try {
       return Right(await function());
-    } on HttpCallException catch (exception) {
-      return Left(HttpCallFailure.fromException(exception));
     } on DioException catch (exception) {
       return Left(
         HttpCallFailure.fromException(
-          exception.error! as HttpCallException,
+          exception,
         ),
       );
     } on EnvironmentException catch (_) {
