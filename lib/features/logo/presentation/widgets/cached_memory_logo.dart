@@ -12,6 +12,7 @@ class CachedMemoryLogo extends StatelessWidget {
   /// Creates a [CachedMemoryLogo] widget.
   const CachedMemoryLogo({
     required this.path,
+    this.accessToken,
     super.key,
     this.errorBuilder,
     this.height,
@@ -22,6 +23,9 @@ class CachedMemoryLogo extends StatelessWidget {
 
   /// The path to the logo image.
   final String path;
+
+  /// The access token to use for the logo request.
+  final String? accessToken;
 
   /// {@macro flutter.widgets.Image.errorBuilder}
   final Widget Function(BuildContext, Object, StackTrace?)? errorBuilder;
@@ -43,7 +47,7 @@ class CachedMemoryLogo extends StatelessWidget {
         create: (context) => LogoCubit(
           params: LogoParams(
             path: path,
-          ),
+          )..accessToken = accessToken,
         ),
         child: Builder(
           builder: (context) => CubitWidgetStateLoader<LogoCubit, Uint8List>(
