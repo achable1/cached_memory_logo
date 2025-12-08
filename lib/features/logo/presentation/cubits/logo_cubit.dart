@@ -9,6 +9,8 @@ import "../../business/repositories/logo_repository.dart";
 import "../../business/use_cases/get_base_64_logo.dart";
 import "../../data/models/params/logo_params.dart";
 import "get_info_cubit.dart";
+import "../../../../core/services/logger/logger_service.dart";
+import "../../../../core/services/logger/base64_debug.dart";
 
 /// A cubit that manages the state of the logo.
 class LogoCubit extends GetInfoCubit<Uint8List> {
@@ -28,19 +30,17 @@ class LogoCubit extends GetInfoCubit<Uint8List> {
       ).call(
         params: params,
       );
+      final logger = getLogger("LogoCubit");
       return result.fold(
         Left.new,
         (r) {
           try {
-            return Right(
-              base64Decode(r),
-            );
-          } catch (e) {
-            return Left(
-              AppFailure.unexpected(
-                "El string no es un formato válido de base64",
-              ),
-            );
+            return Right(base64Decode(r));
+          } catch (e, s) {
+            logger.e(
+                "Failed to base64Decode for path=${params.path} -> ${base64Summary(r)} | error: $e \n$s");
+            return Left(AppFailure.unexpected(
+                "El string no es un formato válido de base64"));
           }
         },
       );

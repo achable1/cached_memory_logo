@@ -8,7 +8,6 @@ import "../repositories/logo_repository.dart";
 
 /// Use case for getting the base64 logo, first part of the flow
 class GetBase64Logo implements UseCaseAsync<String, LogoParams> {
-
   /// Constructor for [GetBase64Logo]
   GetBase64Logo({required this.logoRepository});
 
@@ -22,7 +21,12 @@ class GetBase64Logo implements UseCaseAsync<String, LogoParams> {
   Future<Either<Failure, String>> call({
     required LogoParams params,
   }) async {
+    logger.i("GetBase64Logo.call - fetching for path=${params.path}");
     final value = await logoRepository.getBase64Image(params: params);
+    value.fold(
+      (f) => logger.w("GetBase64Logo.call - failure: $f"),
+      (s) => logger.i("GetBase64Logo.call - success: ${s.length} bytes"),
+    );
     return value.fold(
       (failure) {
         this.failure = failure;
