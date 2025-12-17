@@ -1,6 +1,7 @@
 import "package:dio/dio.dart";
 import "package:fpdart/fpdart.dart";
 
+import "../services/logger/logger_service.dart";
 import "app_exception.dart";
 import "failure.dart";
 
@@ -14,6 +15,7 @@ class ErrorHandler {
   static Future<Either<Failure, T>> handleApiCall<T>(
     Future<T> Function() function,
   ) async {
+    final logger = getLogger("ErrorHandler");
     try {
       return Right(await function());
     } on DioException catch (exception) {
@@ -28,7 +30,8 @@ class ErrorHandler {
           errorMessage: "Ocurrió un error al obtener las variables de entorno",
         ),
       );
-    } catch (e) {
+    } catch (e, s) {
+      logger.e("Unexpected error: $e, $s");
       return Left(
         AppFailure.unexpected(e.toString()),
       );
