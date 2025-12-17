@@ -1,6 +1,6 @@
 import "../../../../../../core/constants/classes/mock_data_source.dart";
-import "../../../../../../core/services/logger/logger_service.dart";
 import "../../../../../../core/services/logger/base64_debug.dart";
+import "../../../../../../core/services/logger/logger_service.dart";
 import "../../../models/params/logo_params.dart";
 import "../logo_remote_data_source.dart";
 

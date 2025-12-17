@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "name": "Flutter (lib\\core\\config\\dependency_injection.dart)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib\\core\\config\\dependency_injection.dart"
+        }
+    ]
+}

@@ -23,10 +23,10 @@ extension ColorExtension on Color {
   /// [alphaRadix] includes the alpha channel in the string.
   String toHex({bool leadingHashSign = true, bool alphaRadix = true}) =>
       '${leadingHashSign ? '#' : ''}'
-      '${alphaRadix ? alpha.toRadixString(16).padLeft(2, '0') : ''}'
-      '${red.toRadixString(16).padLeft(2, '0')}'
-      '${green.toRadixString(16).padLeft(2, '0')}'
-      '${blue.toRadixString(16).padLeft(2, '0')}';
+      '${alphaRadix ? a.round().toRadixString(16).padLeft(2, '0') : ''}'
+      '${r.round().toRadixString(16).padLeft(2, '0')}'
+      '${g.round().toRadixString(16).padLeft(2, '0')}'
+      '${b.round().toRadixString(16).padLeft(2, '0')}';
 
   /// Darkens the color with the given integer percentage amount.
   /// Defaults to 10%.
@@ -55,10 +55,10 @@ extension ColorExtension on Color {
     }
     final int operations = (255 * -(amount / 100)).round();
     final Color color = Color.fromARGB(
-      alpha,
-      math.max(0, math.min(255, red - operations)),
-      math.max(0, math.min(255, green - operations)),
-      math.max(0, math.min(255, blue - operations)),
+      a.round(),
+      math.max(0, math.min(255, r.round() - operations)),
+      math.max(0, math.min(255, g.round() - operations)),
+      math.max(0, math.min(255, b.round() - operations)),
     );
 
     return color;

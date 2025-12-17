@@ -2,12 +2,12 @@ import "package:fpdart/fpdart.dart" show Either, Right;
 
 import "../../../../core/errors/error_handler.dart";
 import "../../../../core/errors/failure.dart";
+import "../../../../core/services/logger/base64_debug.dart";
+import "../../../../core/services/logger/logger_service.dart";
 import "../../business/repositories/logo_repository.dart";
 import "../data_sources/local/logo_local_data_source.dart";
 import "../data_sources/remote/logo_remote_data_source.dart";
 import "../models/params/logo_params.dart";
-import "../../../../core/services/logger/logger_service.dart";
-import "../../../../core/services/logger/base64_debug.dart";
 
 /// Data operations for the Logo collection
 class LogoRepositoryImpl implements LogoRepository {
@@ -27,23 +27,25 @@ class LogoRepositoryImpl implements LogoRepository {
   /// Network information for the Logo collection
   // final NetworkInfo networkInfo;
 
+  static final _logger = getLogger("LogoRepositoryImpl");
+
   @override
   Future<Either<Failure, String>> getBase64Image({
     required LogoParams params,
   }) async {
-    final logger = getLogger("LogoRepositoryImpl");
     final logo = await localDataSource.getLogoByPath(params.path);
     if (logo != null) {
-      logger.i(
-          "Logo found in local DB for ${params.path}: ${base64Summary(logo.imageBase64)} monthSaved=${logo.monthSaved}");
+      _logger.i(
+        "Logo found in local DB for ${params.path}: ${base64Summary(logo.imageBase64)} monthSaved=${logo.monthSaved}",
+      );
       if (logo.monthSaved < DateTime.now().month) {
-        logger.i("Local logo is stale, deleting and fetching new");
+        _logger.i("Local logo is stale, deleting and fetching new");
         await localDataSource.deleteLogo(params.path);
         return _fetchAndSaveLogo(params);
       }
       return Right(logo.imageBase64);
     } else {
-      logger.i("Logo not found locally, fetching remote for ${params.path}");
+      _logger.i("Logo not found locally, fetching remote for ${params.path}");
       return _fetchAndSaveLogo(params);
     }
   }
@@ -54,10 +56,9 @@ class LogoRepositoryImpl implements LogoRepository {
           final response = await remoteDataSource.getBase64Logo(
             params: params,
           );
-          final logger = getLogger("LogoRepositoryImpl");
-          logger.i("Fetched remote base64: ${base64Summary(response)}");
+          _logger.i("Fetched remote base64: ${base64Summary(response)}");
           await localDataSource.saveLogo(params.toTable(response));
-          logger.i("Saved remote logo to local for ${params.path}");
+          _logger.i("Saved remote logo to local for ${params.path}");
           return response;
         },
       );
