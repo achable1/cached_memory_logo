@@ -1,4 +1,5 @@
 import "package:cached_memory_logo/cached_memory_package.dart";
+import "package:dio/dio.dart";
 import "package:flutter/material.dart";
 
 import "core/config/environment_config.dart";
@@ -9,7 +10,9 @@ void main() async {
     flavor: Flavor.production,
   );
 
-  await CachedMemoryPackage.init(fetchUrl: "www.example.com");
+  await CachedMemoryPackage.init(
+    dio: Dio(),
+  );
 
   runApp(const ExampleApp());
 }
