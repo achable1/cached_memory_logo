@@ -22,10 +22,11 @@ class LogoRemoteDataSourceImpl implements LogoRemoteDataSource {
   @override
   Future<String> getBase64Logo({required LogoParams params}) async {
     final response = await dio.get(
-      params.path,
+      "",
       options: Options(
         headers: params.headers(),
       ),
+      queryParameters: params.queries(),
     );
 
     return response.data["Data"];

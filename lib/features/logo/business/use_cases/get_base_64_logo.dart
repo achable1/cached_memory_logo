@@ -22,6 +22,16 @@ class GetBase64Logo implements UseCaseAsync<String, LogoParams> {
     required LogoParams params,
   }) async {
     logger.i("GetBase64Logo.call - fetching for path=${params.path}");
+
+    if (params.path.isEmpty) {
+      return Left(
+        AppFailure(
+          title: "Error al obtener el logo",
+          message: "La ruta del logo no puede estar vacía",
+        ),
+      );
+    }
+
     final value = await logoRepository.getBase64Image(params: params);
     value.fold(
       (f) => logger.w("GetBase64Logo.call - failure: $f"),
