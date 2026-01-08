@@ -10,7 +10,7 @@ class LogoModel extends LogoEntity {
   const LogoModel({
     required super.path,
     required super.imageBase64,
-    required super.monthSaved,
+    required super.saved,
   });
 
   /// Factory method to create a Home model instance from a JSON
@@ -21,7 +21,7 @@ class LogoModel extends LogoEntity {
   factory LogoModel.fromMap({required Map<String, dynamic> map}) => LogoModel(
         path: map["path"] as String,
         imageBase64: map["imageBase64"] as String,
-        monthSaved: map["monthSaved"] as int,
+        saved: map["saved"] as String,
       );
 
   /// Factory method to create a Logo model instance from an
@@ -29,14 +29,14 @@ class LogoModel extends LogoEntity {
   factory LogoModel.fromEntity({required LogoEntity entity}) => LogoModel(
         path: entity.path,
         imageBase64: entity.imageBase64,
-        monthSaved: entity.monthSaved,
+        saved: entity.saved,
       );
 
   /// Converts the Logo model instance to a map
   Map<String, dynamic> toMap() => {
         "path": path,
         "imageBase64": imageBase64,
-        "monthSaved": monthSaved,
+        "saved": saved,
       };
 
   /// Converts the Home model instance to a JSON
@@ -46,6 +46,6 @@ class LogoModel extends LogoEntity {
   LogoEntity toEntity() => LogoEntity(
         path: path,
         imageBase64: imageBase64,
-        monthSaved: monthSaved,
+        saved: saved,
       );
 }

@@ -6,7 +6,7 @@ class LogoEntity extends Equatable {
   const LogoEntity({
     required this.path,
     required this.imageBase64,
-    required this.monthSaved,
+    required this.saved,
   });
 
   /// Path of the logo within the fetchUrl
@@ -15,14 +15,14 @@ class LogoEntity extends Equatable {
   /// Base64 encoded image data of the logo
   final String imageBase64;
 
-  /// Month when the logo was saved/consulted
-  final int monthSaved;
+  /// String representation of the DateTime when logo was saved into local database
+  final String saved;
 
   @override
   List<Object?> get props => [
         path,
         imageBase64,
-        monthSaved,
+        saved,
       ];
 
   @override

@@ -12,6 +12,7 @@ void main() async {
 
   await CachedMemoryPackage.init(
     dio: Dio(),
+    toleranceRange: const Duration(seconds: 1),
   );
 
   runApp(const ExampleApp());

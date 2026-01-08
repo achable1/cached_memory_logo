@@ -2,6 +2,7 @@ import "package:fpdart/fpdart.dart" show Either, Right;
 
 import "../../../../core/errors/error_handler.dart";
 import "../../../../core/errors/failure.dart";
+import "../../../../core/services/connection/network_info.dart";
 import "../../../../core/services/logger/base64_debug.dart";
 import "../../../../core/services/logger/logger_service.dart";
 import "../../business/repositories/logo_repository.dart";
@@ -15,7 +16,8 @@ class LogoRepositoryImpl implements LogoRepository {
   const LogoRepositoryImpl({
     required this.remoteDataSource,
     required this.localDataSource,
-    // required this.networkInfo,
+    required this.networkInfo,
+    this.toleranceRange = const Duration(days: 30),
   });
 
   /// Remote data source for the Logo collection
@@ -25,7 +27,11 @@ class LogoRepositoryImpl implements LogoRepository {
   final LogoLocalDataSource localDataSource;
 
   /// Network information for the Logo collection
-  // final NetworkInfo networkInfo;
+  final NetworkInfo networkInfo;
+
+  /// Represents the difference between the saved DateTime and the time that you want to fetch again remote logo data,
+  /// this automatically sets for 30 days, but, for testing or development flows, you can set into less time
+  final Duration toleranceRange;
 
   static final _logger = getLogger("LogoRepositoryImpl");
 
@@ -36,9 +42,9 @@ class LogoRepositoryImpl implements LogoRepository {
     final logo = await localDataSource.getLogoByPath(params.path);
     if (logo != null) {
       _logger.i(
-        "Logo found in local DB for ${params.path}: ${base64Summary(logo.imageBase64)} monthSaved=${logo.monthSaved}",
+        "Logo found in local DB for ${params.path}: ${base64Summary(logo.imageBase64)} saved=${logo.saved}",
       );
-      if (logo.monthSaved < DateTime.now().month) {
+      if (DateTime.parse(logo.saved).add(toleranceRange).isBefore(DateTime.now())) {
         _logger.i("Local logo is stale, deleting and fetching new");
         await localDataSource.deleteLogo(params.path);
         return _fetchAndSaveLogo(params);

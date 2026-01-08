@@ -19,7 +19,7 @@ class LogoTableAdapter extends TypeAdapter<LogoTable> {
     return LogoTable(
       path: fields[0] as String,
       imageBase64: fields[1] as String,
-      monthSaved: (fields[2] as num).toInt(),
+      saved: fields[3] as String,
     );
   }
 
@@ -31,8 +31,8 @@ class LogoTableAdapter extends TypeAdapter<LogoTable> {
       ..write(obj.path)
       ..writeByte(1)
       ..write(obj.imageBase64)
-      ..writeByte(2)
-      ..write(obj.monthSaved);
+      ..writeByte(3)
+      ..write(obj.saved);
   }
 
   @override

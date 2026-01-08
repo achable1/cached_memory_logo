@@ -21,14 +21,13 @@ class LogoParams extends Params {
 
   @override
   Map<String, dynamic> body() => {
-    "path": path,
-  };
+        "path": path,
+      };
 
   /// Converts the LogoParams to a LogoTable for save in local DB
   LogoTable toTable(String imageBase64) => LogoTable(
-      path: path,
-      imageBase64: imageBase64,
-      monthSaved: DateTime.now().month,
-    );
-
+        path: path,
+        imageBase64: imageBase64,
+        saved: DateTime.now().toIso8601String(),
+      );
 }

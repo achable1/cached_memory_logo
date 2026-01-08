@@ -1,9 +1,9 @@
 import "package:hive_ce/hive.dart";
 
 import "../../../../../core/services/hive/hive_boxes.dart";
-import "../../models/tables/logo_table.dart";
-import "../../../../../core/services/logger/logger_service.dart";
 import "../../../../../core/services/logger/base64_debug.dart";
+import "../../../../../core/services/logger/logger_service.dart";
+import "../../models/tables/logo_table.dart";
 
 /// Local data source for the Logo collection
 abstract class LogoLocalDataSource {
@@ -24,9 +24,9 @@ class LogoLocalDataSourceImpl implements LogoLocalDataSource {
   Future<LogoTable?> getLogoByPath(String path) async {
     final box = Hive.box<LogoTable>(logoBox);
     final logo = box.get(path);
-    final logger = getLogger("LogoLocalDataSource");
-    logger.i(
-        "Loaded logo from hive for path=$path -> ${logo == null ? 'null' : base64Summary(logo.imageBase64)}");
+    getLogger("LogoLocalDataSource").i(
+      "Loaded logo from hive for path=$path -> ${logo == null ? 'null' : base64Summary(logo.imageBase64)},",
+    );
     return logo;
   }
 
@@ -42,7 +42,8 @@ class LogoLocalDataSourceImpl implements LogoLocalDataSource {
     }
 
     logger.i(
-        "Saving logo path=${logo.path} image=${base64Summary(logo.imageBase64)}");
+      "Saving logo path=${logo.path} image=${base64Summary(logo.imageBase64)}",
+    );
     await logosBox.put(logo.path, logo);
     logger.i("Saved logo with key=${logo.path}");
   }

@@ -14,7 +14,7 @@ class LogoRemoteDataMock extends MockDataSource
   });
 
   @override
-  Logger get logger => getLogger("CTT Remote Data Mock");
+  Logger get logger => getLogger("LogoRemoteDataMock");
 
   @override
   Future<String> getBase64Logo({
