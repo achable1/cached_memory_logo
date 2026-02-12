@@ -25,7 +25,7 @@ class LogoCubit extends GetInfoCubit<Uint8List> {
   @override
   Future<Either<Failure, Uint8List>> callUseCase() async {
     try {
-      final result = await GetBase64Logo(
+      final result = await GetBase64Logo( // TODO: Change to GetLogo Use Case
         logoRepository: GetIt.I.get<LogoRepository>(),
       ).call(
         params: params,

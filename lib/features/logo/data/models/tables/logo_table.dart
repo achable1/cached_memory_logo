@@ -5,15 +5,15 @@ class LogoTable extends HiveObject {
   /// Creates a new instance of [LogoTable].
   LogoTable({
     required this.path,
-    required this.imageBase64,
+    required this.fileName,
     required this.saved,
   });
 
   /// Path of the logo within the fetchUrl
   final String path;
 
-  /// Base64 encoded image data of the logo
-  final String imageBase64;
+  /// File name of the saved image in app storage
+  final String fileName;
 
   /// String representation of the DateTime when logo was saved into local database
   final String saved;

@@ -1,56 +1,113 @@
-import "package:hive_ce/hive.dart";
+import "dart:convert" show base64Decode;
+import "dart:io" show Directory, File, Platform;
 
-import "../../../../../core/services/hive/hive_boxes.dart";
-import "../../../../../core/services/logger/base64_debug.dart";
-import "../../../../../core/services/logger/logger_service.dart";
-import "../../models/tables/logo_table.dart";
+import "package:crypto/crypto.dart";
+import "package:path_provider/path_provider.dart";
 
-/// Local data source for the Logo collection
+/// Local data source for the Logo Collection
 abstract class LogoLocalDataSource {
-  /// Fetches a logo by its path from the local database.
-  Future<LogoTable?> getLogoByPath(String path);
+  /// Saves within the device storage the base64 logo, returns the <code>fileName</code> value
+  Future<String> saveLogoFromBase64({
+    required String base64String,
+  });
 
-  /// Saves a logo to the local database.
-  Future<void> saveLogo(LogoTable logo);
+  /// Retrieves the file from device storage from the <code>fileName</code>
+  Future<File> getLogoFile({
+    required String fileName,
+  });
 
-  /// Deletes a logo from the local database.
-  Future<void> deleteLogo(String path);
+  /// Retrieves the logo path from the <code>fileName</code>
+  Future<String> getLogoPath({
+    required String fileName,
+  });
+
+  /// Deletes an local storaged logo from the <code>fileName</code>
+  Future<void> deleteLogo({
+    required String fileName,
+  });
+
+  /// Clean up the unused logos files that doesn't are in a Set of <code>fileName</code>'s provided
+  Future<void> cleanupUnusedLogos({
+    required Set<String> usedFileNames,
+  });
 }
 
-/// Local data source for the Logo collection
+/// Implementation of local data source for the Logo Collection
 class LogoLocalDataSourceImpl implements LogoLocalDataSource {
-  /// Fetches a logo by its path from the local database.
-  @override
-  Future<LogoTable?> getLogoByPath(String path) async {
-    final box = Hive.box<LogoTable>(logoBox);
-    final logo = box.get(path);
-    getLogger("LogoLocalDataSource").i(
-      "Loaded logo from hive for path=$path -> ${logo == null ? 'null' : base64Summary(logo.imageBase64)},",
-    );
-    return logo;
-  }
+  static const String _logoDir = "logos";
 
-  /// Saves a logo to the local database.
   @override
-  Future<void> saveLogo(LogoTable logo) async {
-    final logosBox = Hive.box<LogoTable>(logoBox);
-    final logger = getLogger("LogoLocalDataSource");
+  Future<void> cleanupUnusedLogos({
+    required Set<String> usedFileNames,
+  }) async {
+    final appDir = await getApplicationDocumentsDirectory();
+    final logoPath = Directory("${appDir.path}/$_logoDir");
 
-    if (logosBox.containsKey(logo.path)) {
-      logger.w("Attempt to save duplicate logo with path=${logo.path}");
+    if (!await logoPath.exists()) {
       return;
     }
 
-    logger.i(
-      "Saving logo path=${logo.path} image=${base64Summary(logo.imageBase64)}",
-    );
-    await logosBox.put(logo.path, logo);
-    logger.i("Saved logo with key=${logo.path}");
+    await for (final entity in logoPath.list()) {
+      if (entity is! File) {
+        continue;
+      }
+
+      final fileName = entity.path.split(Platform.pathSeparator).last;
+
+      if (!usedFileNames.contains(fileName)) {
+        await entity.delete();
+      }
+    }
   }
 
-  /// Deletes a logo from the local database.
   @override
-  Future<void> deleteLogo(String path) async {
-    await Hive.box<LogoTable>(logoBox).delete(path);
+  Future<void> deleteLogo({
+    required String fileName,
+  }) async {
+    final file = await getLogoFile(fileName: fileName);
+    if (await file.exists()) {
+      await file.delete();
+    }
+  }
+
+  @override
+  Future<File> getLogoFile({
+    required String fileName,
+  }) async {
+    final appDir = await getApplicationDocumentsDirectory();
+    return File("${appDir.path}/$_logoDir/$fileName");
+  }
+
+  @override
+  Future<String> getLogoPath({
+    required String fileName,
+  }) async {
+    final logo = await getLogoFile(fileName: fileName);
+    return logo.path;
+  }
+
+  @override
+  Future<String> saveLogoFromBase64({
+    required String base64String,
+  }) async {
+    final bytes = base64Decode(base64String);
+
+    final hash = sha256.convert(bytes).toString();
+    final fileName = "$hash.png";
+
+    final appDir = await getApplicationDocumentsDirectory();
+    final logoPath = Directory("${appDir.path}/$_logoDir");
+
+    if (!await logoPath.exists()) {
+      await logoPath.create(recursive: true);
+    }
+
+    final file = File("${logoPath.path}/$fileName");
+
+    if (!await file.exists()) {
+      await file.writeAsBytes(bytes);
+    }
+
+    return fileName;
   }
 }

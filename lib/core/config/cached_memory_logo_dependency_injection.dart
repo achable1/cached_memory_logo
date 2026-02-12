@@ -2,15 +2,14 @@ import "package:dio/dio.dart";
 import "package:flutter/material.dart";
 import "package:get_it/get_it.dart";
 import "package:hive_ce_flutter/hive_flutter.dart";
-import "package:internet_connection_checker_plus/internet_connection_checker_plus.dart";
 
 import "../../features/logo/business/repositories/logo_repository.dart";
+import "../../features/logo/data/data_sources/local/logo_hive_data_source.dart";
 import "../../features/logo/data/data_sources/local/logo_local_data_source.dart";
 import "../../features/logo/data/data_sources/remote/logo_remote_data_source.dart";
 import "../../features/logo/data/data_sources/remote/mock/logo_remote_data_mock.dart";
 import "../../features/logo/data/models/tables/logo_table.dart";
 import "../../features/logo/data/repositories/logo_repository_impl.dart";
-import "../services/connection/network_info.dart";
 import "../services/hive/hive_boxes.dart";
 import "../services/hive/hive_registrar.g.dart";
 import "../services/logger/logger_service.dart";
@@ -49,10 +48,8 @@ class CachedMemoryLogoDependencyInjection {
     GetIt.I.registerSingleton<LogoRepository>(
       LogoRepositoryImpl(
         toleranceRange: toleranceRange ?? const Duration(days: 30),
-        networkInfo: NetworkInfoImpl(
-          InternetConnection(),
-        ),
         localDataSource: LogoLocalDataSourceImpl(),
+        hiveDataSource: LogoHiveDataSourceImpl(),
         remoteDataSource: LogoRemoteDataSourceImpl(
           dio: dio,
         ),
@@ -68,10 +65,8 @@ class CachedMemoryLogoDependencyInjection {
     GetIt.I.registerSingleton<LogoRepository>(
       LogoRepositoryImpl(
         toleranceRange: toleranceRange ?? const Duration(days: 30),
-        networkInfo: NetworkInfoImpl(
-          InternetConnection(),
-        ),
         localDataSource: LogoLocalDataSourceImpl(),
+        hiveDataSource: LogoHiveDataSourceImpl(),
         remoteDataSource: LogoRemoteDataMock(
           errorPercentage: errorPercentage,
           maxWaitTime: maxWaitTime,

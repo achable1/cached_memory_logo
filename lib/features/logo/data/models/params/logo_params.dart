@@ -25,9 +25,9 @@ class LogoParams extends Params {
       };
 
   /// Converts the LogoParams to a LogoTable for save in local DB
-  LogoTable toTable(String imageBase64) => LogoTable(
+  LogoTable toTable(String fileName) => LogoTable(
         path: path,
-        imageBase64: imageBase64,
+        fileName: fileName,
         saved: DateTime.now().toIso8601String(),
       );
 }
