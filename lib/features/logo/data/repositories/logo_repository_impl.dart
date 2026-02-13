@@ -10,6 +10,7 @@ import "../data_sources/local/logo_hive_data_source.dart";
 import "../data_sources/local/logo_local_data_source.dart";
 import "../data_sources/remote/logo_remote_data_source.dart";
 import "../models/params/params.dart";
+import "../models/tables/logo_table.dart";
 
 /// Data operations for the Logo collection
 class LogoRepositoryImpl implements LogoRepository {
@@ -19,7 +20,6 @@ class LogoRepositoryImpl implements LogoRepository {
     required this.localDataSource,
     required this.hiveDataSource,
     this.networkInfo,
-    this.toleranceRange = const Duration(days: 30),
   });
 
   /// Remote data source for the Logo collection
@@ -34,16 +34,12 @@ class LogoRepositoryImpl implements LogoRepository {
   /// Network information for the Logo collection
   final NetworkInfo? networkInfo;
 
-  /// Represents the difference between the saved DateTime and the time that you want to fetch again remote logo data,
-  /// this automatically sets for 30 days, but, for testing or development flows, you can set into less time
-  final Duration toleranceRange;
-
   @override
-  Future<Either<Failure, String?>> getLogoFileName({
+  Future<Either<Failure, LogoTable?>> getLogoTable({
     required LogoParams params,
   }) =>
       ErrorHandler.handleCacheCall(
-        () async => hiveDataSource.getLogoFileName(params.path),
+        () async => hiveDataSource.getLogoTable(params.path),
       );
 
   @override
@@ -99,7 +95,8 @@ class LogoRepositoryImpl implements LogoRepository {
   @override
   Future<Either<Failure, void>> cleanupUnusedLogos({
     required Set<String> usedFileNames,
-  }) => ErrorHandler.handleCacheCall(
-    () => localDataSource.cleanupUnusedLogos(usedFileNames: usedFileNames),
-  );
+  }) =>
+      ErrorHandler.handleCacheCall(
+        () => localDataSource.cleanupUnusedLogos(usedFileNames: usedFileNames),
+      );
 }

@@ -1,19 +1,18 @@
-import "dart:convert";
-import "dart:typed_data";
 
 import "package:fpdart/fpdart.dart";
 import "package:get_it/get_it.dart";
 
+import "../../../../core/config/instances_names.dart";
 import "../../../../core/errors/failure.dart";
-import "../../../../core/services/logger/base64_debug.dart";
 import "../../../../core/services/logger/logger_service.dart";
+import "../../business/entities/logo_entity.dart";
 import "../../business/repositories/logo_repository.dart";
-import "../../business/use_cases/get_base_64_logo.dart";
+import "../../business/use_cases/get_logo.dart";
 import "../../data/models/params/logo_params.dart";
 import "get_info_cubit.dart";
 
 /// A cubit that manages the state of the logo.
-class LogoCubit extends GetInfoCubit<Uint8List> {
+class LogoCubit extends GetInfoCubit<LogoEntity> {
   /// Creates a [LogoCubit].
   LogoCubit({
     required this.params,
@@ -23,10 +22,13 @@ class LogoCubit extends GetInfoCubit<Uint8List> {
   final LogoParams params;
 
   @override
-  Future<Either<Failure, Uint8List>> callUseCase() async {
+  Future<Either<Failure, LogoEntity>> callUseCase() async {
     try {
-      final result = await GetBase64Logo( // TODO: Change to GetLogo Use Case
+      final result = await GetLogo(
         logoRepository: GetIt.I.get<LogoRepository>(),
+        toleranceRange: GetIt.I.get<Duration>(
+          instanceName: InstancesNames.durationInstance,
+        ),
       ).call(
         params: params,
       );
@@ -35,10 +37,10 @@ class LogoCubit extends GetInfoCubit<Uint8List> {
         Left.new,
         (r) {
           try {
-            return Right(base64Decode(r));
+            return Right(r);
           } catch (e, s) {
             logger.e(
-              "Failed to base64Decode for path=${params.path} -> ${base64Summary(r)} | error: $e \n$s",
+              "Failed to base64Decode for path=${params.path} | error: $e \n$s",
             );
             return Left(
               AppFailure.unexpected(

@@ -6,7 +6,7 @@ import "../../models/tables/logo_table.dart";
 /// Hive data source for the Logo collection
 abstract class LogoHiveDataSource {
   /// Fetches a logo by its path from the hive database.
-  Future<String?> getLogoFileName(String path);
+  Future<LogoTable?> getLogoTable(String path);
 
   /// Saves a logo to the Hive database.
   Future<void> saveLogo(LogoTable logo);
@@ -19,10 +19,10 @@ abstract class LogoHiveDataSource {
 class LogoHiveDataSourceImpl implements LogoHiveDataSource {
   /// Fetches a logo by its path from the Hive database.
   @override
-  Future<String?> getLogoFileName(String path) async {
+  Future<LogoTable?> getLogoTable(String path) async {
     final box = Hive.box<LogoTable>(logoBox);
     final logo = box.get(path);
-    return logo?.fileName;
+    return logo;
   }
 
   /// Saves a logo to the Hive database.
@@ -39,5 +39,6 @@ class LogoHiveDataSourceImpl implements LogoHiveDataSource {
 
   /// Deletes a logo from the Hive database.
   @override
-  Future<void> deleteLogo(String path) async => Hive.box<LogoTable>(logoBox).delete(path);
+  Future<void> deleteLogo(String path) async =>
+      Hive.box<LogoTable>(logoBox).delete(path);
 }

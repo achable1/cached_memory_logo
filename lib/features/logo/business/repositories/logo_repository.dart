@@ -4,11 +4,12 @@ import "package:fpdart/fpdart.dart";
 
 import "../../../../core/errors/failure.dart";
 import "../../data/models/params/params.dart";
+import "../../data/models/tables/logo_table.dart";
 
 /// Data operations for the Logo collection
 abstract class LogoRepository {
   /// Fetches the fileName metadata storaged of the logo
-  Future<Either<Failure, String?>> getLogoFileName({
+  Future<Either<Failure, LogoTable?>> getLogoTable({
     required LogoParams params,
   });
 

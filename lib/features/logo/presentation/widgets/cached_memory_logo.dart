@@ -1,9 +1,10 @@
+import "dart:convert";
+
 import "package:flutter/material.dart";
-import "package:flutter/services.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 
-import "../../../../core/services/logger/logger_service.dart";
 import "../../../../core/widgets/cubit_state_mixin_builder.dart";
+import "../../business/entities/logo_entity.dart";
 import "../../data/models/params/logo_params.dart";
 import "../cubits/logo_cubit.dart";
 import "shimmer_logo.dart";
@@ -44,38 +45,44 @@ class CachedMemoryLogo extends StatelessWidget {
   final Widget? fallbackWidget;
 
   @override
-  Widget build(BuildContext context) {
-    final logger = getLogger("CachedMemoryLogo")
-    ..d("Building CachedMemoryLogo for path=$path");
-    return BlocProvider(
-      create: (context) => LogoCubit(
-        params: LogoParams(
-          path: path,
-        )..accessToken = accessToken,
-      ),
-      child: Builder(
-        builder: (context) => CubitWidgetStateLoader<LogoCubit, Uint8List>(
-          onSuccess: (data) => Image.memory(
-            data,
-            errorBuilder: errorBuilder,
-            height: height,
-            width: width,
-          ),
-          onFailure: (error) {
-            logger.w("Logo failed to load for path=$path: ${error.message}");
-            return fallbackWidget ??
+  Widget build(BuildContext context) => BlocProvider(
+        create: (context) => LogoCubit(
+          params: LogoParams(
+            path: path,
+          )..accessToken = accessToken,
+        ),
+        child: Builder(
+          builder: (context) => CubitWidgetStateLoader<LogoCubit, LogoEntity>(
+            onSuccess: (data) {
+              if (data.base64Logo != null) {
+                return Image.memory(
+                  base64Decode(data.base64Logo!),
+                  errorBuilder: errorBuilder,
+                  height: height,
+                  width: width,
+                );
+              } else if (data.fileLogo != null) {
+                return Image.file(
+                  data.fileLogo!,
+                  errorBuilder: errorBuilder,
+                  height: height,
+                  width: width,
+                );
+              }
+              return const SizedBox.shrink();
+            },
+            onFailure: (error) =>
+                fallbackWidget ??
                 ColoredBox(
                   color: Colors.grey.shade300,
                   child: const SizedBox(),
-                );
-          },
-          onLoading: loadingWidget ??
-              ShimmerLogo(
-                height: height,
-                width: width,
-              ),
+                ),
+            onLoading: loadingWidget ??
+                ShimmerLogo(
+                  height: height,
+                  width: width,
+                ),
+          ),
         ),
-      ),
-    );
-  }
+      );
 }
