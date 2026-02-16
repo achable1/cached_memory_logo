@@ -19,27 +19,89 @@ class HomePage extends StatelessWidget {
         body: BlocProvider(
           create: (context) => HomeCubit(),
           child: const Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                CachedMemoryLogo(
-                  path: "logos/costco.png",
-                  height: 100,
-                  width: 100,
-                ),
-                SizedBox(height: 20),
-                CachedMemoryLogo(
-                  path: "logos/costco.png",
-                  height: 100,
-                  width: 100,
-                ),
-                SizedBox(height: 20),
-                CachedMemoryLogo(
-                  path: "logos/another_test.png",
-                  height: 100,
-                  width: 100,
-                ),
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CachedMemoryLogo(
+                    path: "logos/7-eleven.png",
+                    height: 100,
+                    width: 100,
+                  ),
+                  SizedBox(height: 20),
+                  CachedMemoryLogo(
+                    path: "logos/7-eleven.png",
+                    height: 100,
+                    width: 100,
+                  ),
+                  SizedBox(height: 20),
+                  CachedMemoryLogo(
+                    path: "logos/mercado-pago.png",
+                    height: 100,
+                    width: 100,
+                  ),
+                  SizedBox(height: 20),
+                  CachedMemoryLogo(
+                    path: "logos/paypal.png",
+                    height: 100,
+                    width: 100,
+                  ),
+                  SizedBox(height: 20),
+                  CachedMemoryLogo(
+                    path: "logos/paypal.png",
+                    height: 100,
+                    width: 100,
+                  ),
+                  SizedBox(height: 20),
+                  CachedMemoryLogo(
+                    path: "logos/paypal.png",
+                    height: 100,
+                    width: 100,
+                  ),
+                  SizedBox(height: 20),
+                  CachedMemoryLogo(
+                    path: "logos/paypal.png",
+                    height: 100,
+                    width: 100,
+                  ),
+                  SizedBox(height: 20),
+                  CachedMemoryLogo(
+                    path: "logos/one-card.png",
+                    height: 100,
+                    width: 100,
+                  ),
+                  SizedBox(height: 20),
+                  CachedMemoryLogo(
+                    path: "logos/one-card.png",
+                    height: 100,
+                    width: 100,
+                  ),
+                  SizedBox(height: 20),
+                  CachedMemoryLogo(
+                    path: "logos/one-card.png",
+                    height: 100,
+                    width: 100,
+                  ),
+                  SizedBox(height: 20),
+                  CachedMemoryLogo(
+                    path: "logos/one-card.png",
+                    height: 100,
+                    width: 100,
+                  ),
+                  SizedBox(height: 20),
+                  CachedMemoryLogo(
+                    path: "logos/costco.png",
+                    height: 100,
+                    width: 100,
+                  ),
+                  SizedBox(height: 20),
+                  CachedMemoryLogo(
+                    path: "logos/another_test.png",
+                    height: 100,
+                    width: 100,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
