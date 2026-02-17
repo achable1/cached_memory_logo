@@ -23,6 +23,7 @@ dependencies:
   hive_ce_flutter: ^2.3.1
   path_provider: ^2.1.5
   crypto: ^3.0.7
+  disk_space_2: ^1.0.12
 
 dev_dependencies:
   build_runner: ^2.10.4

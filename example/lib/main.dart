@@ -13,7 +13,7 @@ void main() async {
   await CachedMemoryPackage.init(
     dio: Dio(),
     toleranceRange: const Duration(
-      days: 30,
+      seconds: 1,
     ),
     isMock: true,
   );

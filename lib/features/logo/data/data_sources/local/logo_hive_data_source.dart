@@ -12,7 +12,7 @@ abstract class LogoHiveDataSource {
   Future<void> saveLogo(LogoTable logo);
 
   /// Deletes a logo from the Hive database.
-  Future<void> deleteLogo(String path);
+  Future<void> deleteLogo(String? path);
 }
 
 /// Hive data source for the Logo collection
@@ -39,6 +39,6 @@ class LogoHiveDataSourceImpl implements LogoHiveDataSource {
 
   /// Deletes a logo from the Hive database.
   @override
-  Future<void> deleteLogo(String path) async =>
-      Hive.box<LogoTable>(logoBox).delete(path);
+  Future<void> deleteLogo(String? path) async =>
+      Hive.box<LogoTable>(logoBox).delete(path ?? "key");
 }

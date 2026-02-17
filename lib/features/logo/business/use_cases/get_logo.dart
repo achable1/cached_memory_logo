@@ -1,6 +1,10 @@
+import "dart:convert" show base64Decode;
 import "dart:io";
 
+import "package:disk_space_2/disk_space_2.dart";
 import "package:fpdart/fpdart.dart";
+import "package:get_it/get_it.dart";
+import "package:path_provider/path_provider.dart";
 
 import "../../../../core/constants/classes/use_case.dart";
 import "../../../../core/errors/failure.dart";
@@ -9,10 +13,7 @@ import "../../data/models/params/params.dart";
 import "../../data/models/tables/logo_table.dart";
 import "../entities/logo_entity.dart";
 import "../repositories/logo_repository.dart";
-import "get_base_64_logo.dart";
-import "get_logo_file.dart";
-import "get_logo_table.dart";
-import "save_logo.dart";
+import "use_cases.dart";
 
 /// Retrieves a file logo, whetever if its fetched in remote, or if its locally storaged
 class GetLogo extends UseCaseAsync<LogoEntity, LogoParams> {
@@ -34,6 +35,7 @@ class GetLogo extends UseCaseAsync<LogoEntity, LogoParams> {
     required LogoParams params,
   }) async {
     final Logger logger = getLogger("GetLogo");
+
     LogoTable? logoTable;
     Failure? failure;
     File? file;
@@ -61,8 +63,34 @@ class GetLogo extends UseCaseAsync<LogoEntity, LogoParams> {
     final bool isOldLogo =
         dateTime.add(toleranceRange).isBefore(DateTime.now());
 
+    if (logoTable != null && isOldLogo) {
+      final deleteLogoUseCase = await DeleteLogo(
+        logoRepository: GetIt.I<LogoRepository>(),
+      ).call(
+        params: DeleteLogoParams(
+          path: logoTable?.path,
+          fileName: logoTable?.fileName,
+        ),
+      );
+
+      deleteLogoUseCase.fold(
+        (l) {
+          // Log failure but don't block the refetch flow
+          logger.w(
+            "DeleteLogo warning: ${l.title}, ${l.message}; Continuing with refetch",
+          );
+        },
+        (r) => r,
+      );
+
+      // Reset logoTable to null to refetch, regardless of delete success
+      logoTable = null;
+    }
+
     if (logoTable == null || isOldLogo) {
-      logger.d("LogoTable null or is old logo");
+      logger.i(
+        "LogoTable null or is old logo, needed to fetch",
+      );
 
       String? base64Logo;
 
@@ -83,22 +111,40 @@ class GetLogo extends UseCaseAsync<LogoEntity, LogoParams> {
         return Left(failure!);
       }
 
+      final dir = await getApplicationDocumentsDirectory();
+      final freeDeviceSpaceMiB =
+          await DiskSpace.getFreeDiskSpaceForPath(dir.path);
+
+      // 1 MB is approximately 0.9537 MiB, DiskSpace returns MiB, so we transform here
+      final freeDeviceSpaceMB = (freeDeviceSpaceMiB ?? 0) / 0.9537;
+
+      // Check byte lenght of base 64 value; Bytes to KB, and KB to MB
+      final decodedBytes = base64Decode(base64Logo!);
+      final weightOfFileMB = decodedBytes.length / (1024 * 1024);
+
+      // 50MB + Aprox. MB file size + 500 MB safety margin for system sizes calculation
+      final spaceMargin = 50 + weightOfFileMB + 500;
+
+      if (freeDeviceSpaceMB < spaceMargin) {
+        logger.d(
+          "GetLogo base64Logo returned, because not enough space within margin",
+        );
+        return Right(LogoEntity(base64Logo: base64Logo));
+      }
+
       final saveLogoUseCase = await SaveLogo(
         logoRepository: logoRepository,
       ).call(
         params: SaveLogoParams(
           path: params.path,
-          base64Logo: base64Logo,
+          bytes: decodedBytes,
         ),
       );
 
       saveLogoUseCase.fold(
-        (l) {
-          logger.f("SaveLogo failure: ${failure!.title}, ${failure!.message}");
-          return failure = l;
-        },
+        (l) => failure = l,
         (r) {
-          logger.d("SaveLogo success, yay");
+          logger.i("SaveLogo success!");
           r;
         },
       );
@@ -128,12 +174,12 @@ class GetLogo extends UseCaseAsync<LogoEntity, LogoParams> {
       }
 
       if (file != null) {
-        logger.d("GetLogoFile fileLogo returned");
+        logger.i("GetLogoFile local fileLogo returned");
         return Right(LogoEntity(fileLogo: file));
       }
     }
 
-    logger.d("GetLogo fallback return (empty)");
+    logger.i("GetLogo fallback return (empty)");
     return const Right(LogoEntity());
   }
 }

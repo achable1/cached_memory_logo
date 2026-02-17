@@ -59,7 +59,7 @@ class LogoRepositoryImpl implements LogoRepository {
       ErrorHandler.handleCacheCall(
         () async {
           final value = await localDataSource.saveLogoFromBase64(
-            base64String: params.base64Logo,
+            bytes: params.bytes,
           );
           await hiveDataSource.saveLogo(
             LogoTable(
@@ -77,8 +77,9 @@ class LogoRepositoryImpl implements LogoRepository {
   }) =>
       ErrorHandler.handleCacheCall(
         () async {
+          // Delete from filesystem FIRST, then from Hive to maintain sync
+          await localDataSource.deleteLogo(params.fileName);
           await hiveDataSource.deleteLogo(params.path);
-          await localDataSource.deleteLogo(fileName: params.fileName);
         },
       );
 

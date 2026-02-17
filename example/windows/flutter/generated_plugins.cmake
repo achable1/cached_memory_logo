@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   connectivity_plus
+  disk_space_2
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

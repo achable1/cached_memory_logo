@@ -1,5 +1,5 @@
-import "dart:convert" show base64Decode;
 import "dart:io" show Directory, File, Platform;
+import "dart:typed_data";
 
 import "package:crypto/crypto.dart";
 import "package:path_provider/path_provider.dart";
@@ -8,7 +8,7 @@ import "package:path_provider/path_provider.dart";
 abstract class LogoLocalDataSource {
   /// Saves within the device storage the base64 logo, returns the <code>fileName</code> value
   Future<String> saveLogoFromBase64({
-    required String? base64String,
+    required Uint8List? bytes,
   });
 
   /// Retrieves the file from device storage from the <code>fileName</code>
@@ -22,9 +22,7 @@ abstract class LogoLocalDataSource {
   });
 
   /// Deletes an local storaged logo from the <code>fileName</code>
-  Future<void> deleteLogo({
-    required String fileName,
-  });
+  Future<void> deleteLogo(String? fileName);
 
   /// Clean up the unused logos files that doesn't are in a Set of <code>fileName</code>'s provided
   Future<void> cleanupUnusedLogos({
@@ -61,13 +59,18 @@ class LogoLocalDataSourceImpl implements LogoLocalDataSource {
   }
 
   @override
-  Future<void> deleteLogo({
-    required String fileName,
-  }) async {
-    final file = await getLogoFile(fileName: fileName);
-    if (await file.exists()) {
-      await file.delete();
+  Future<void> deleteLogo(String? fileName) async {
+    if (fileName == null || fileName.isEmpty) {
+      return;
     }
+
+    try {
+      final file = await getLogoFile(fileName: fileName);
+      if (await file.exists()) {
+        await file.delete();
+      }
+    // ignore: empty_catches
+    } catch (e) {}
   }
 
   @override
@@ -88,13 +91,11 @@ class LogoLocalDataSourceImpl implements LogoLocalDataSource {
 
   @override
   Future<String> saveLogoFromBase64({
-    required String? base64String,
+    required Uint8List? bytes,
   }) async {
-    if (base64String == null) {
+    if (bytes == null) {
       return "";
     }
- 
-    final bytes = base64Decode(base64String);
 
     final hash = sha256.convert(bytes).toString();
     final fileName = "$hash.png";
