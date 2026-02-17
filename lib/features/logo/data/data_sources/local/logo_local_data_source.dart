@@ -8,7 +8,7 @@ import "package:path_provider/path_provider.dart";
 abstract class LogoLocalDataSource {
   /// Saves within the device storage the base64 logo, returns the <code>fileName</code> value
   Future<String> saveLogoFromBase64({
-    required String base64String,
+    required String? base64String,
   });
 
   /// Retrieves the file from device storage from the <code>fileName</code>
@@ -88,8 +88,12 @@ class LogoLocalDataSourceImpl implements LogoLocalDataSource {
 
   @override
   Future<String> saveLogoFromBase64({
-    required String base64String,
+    required String? base64String,
   }) async {
+    if (base64String == null) {
+      return "";
+    }
+ 
     final bytes = base64Decode(base64String);
 
     final hash = sha256.convert(bytes).toString();

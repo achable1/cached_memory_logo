@@ -58,9 +58,15 @@ class LogoRepositoryImpl implements LogoRepository {
   }) =>
       ErrorHandler.handleCacheCall(
         () async {
-          await hiveDataSource.saveLogo(params.logoTable);
-          await localDataSource.saveLogoFromBase64(
+          final value = await localDataSource.saveLogoFromBase64(
             base64String: params.base64Logo,
+          );
+          await hiveDataSource.saveLogo(
+            LogoTable(
+              path: params.path,
+              fileName: value,
+              saved: DateTime.now().toIso8601String(),
+            ),
           );
         },
       );

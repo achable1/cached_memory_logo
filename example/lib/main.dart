@@ -12,7 +12,10 @@ void main() async {
 
   await CachedMemoryPackage.init(
     dio: Dio(),
-    toleranceRange: const Duration(seconds: 1),
+    toleranceRange: const Duration(
+      days: 30,
+    ),
+    isMock: true,
   );
 
   runApp(const ExampleApp());
