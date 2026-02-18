@@ -3,6 +3,10 @@ import "package:flutter/material.dart";
 import "package:get_it/get_it.dart";
 import "package:hive_ce_flutter/hive_flutter.dart";
 
+import "storage_config.dart";
+import "../../features/logo/business/entities/dependencies/device_storage_validator.dart";
+import "../../features/logo/business/entities/dependencies/device_storage_validator_impl.dart";
+
 import "../../features/logo/business/repositories/logo_repository.dart";
 import "../../features/logo/data/data_sources/local/logo_hive_data_source.dart";
 import "../../features/logo/data/data_sources/local/logo_local_data_source.dart";
@@ -20,14 +24,10 @@ class CachedMemoryLogoDependencyInjection {
   static Future<void> init(
     Dio dio,
     Duration? toleranceRange, {
+    StorageConfig? storageConfig,
     bool? isMock,
   }) async {
     WidgetsFlutterBinding.ensureInitialized();
-
-    GetIt.I.registerSingleton<Duration>(
-      toleranceRange ?? const Duration(days: 30), 
-      instanceName: InstancesNames.durationInstance,
-    );
 
     if (isMock ?? false) {
       _registerMockRepositories(
@@ -38,7 +38,7 @@ class CachedMemoryLogoDependencyInjection {
     } else {
       _registerRemoteRepositories(dio, toleranceRange);
     }
-    await registerServices();
+    await registerServices(toleranceRange, storageConfig: storageConfig);
   }
 
   static void _registerRemoteRepositories(
@@ -74,14 +74,42 @@ class CachedMemoryLogoDependencyInjection {
   }
 
   /// Registers the services for the application
-  static Future<void> registerServices() async {
+  static Future<void> registerServices(
+    Duration? toleranceRange, {
+    StorageConfig? storageConfig,
+  }) async {
+    await _hiveServices();
+    await _miscServices(toleranceRange, clientStorageConfig: storageConfig);
+  }
+
+  static Future _hiveServices() async {
     try {
-      // Hive
       await Hive.initFlutter();
       Hive.registerAdapters();
       await Hive.openBox<LogoTable>(logoBox);
     } catch (e) {
       rethrow;
     }
+  }
+
+  static Future _miscServices(
+    Duration? toleranceRange, {
+    StorageConfig? clientStorageConfig,
+  }) async {
+    GetIt.I.registerSingleton<Duration>(
+      toleranceRange ?? const Duration(days: 30),
+      instanceName: InstancesNames.durationInstance,
+    );
+
+    final storageConfig = clientStorageConfig ?? const StorageConfig();
+
+    GetIt.I.registerSingleton<StorageConfig>(storageConfig);
+
+    GetIt.I.registerSingleton<DeviceStorageValidator>(
+      DeviceStorageValidatorImpl(
+        minFreeSpaceMB: storageConfig.minFreeSpaceMB,
+        safetyMarginMB: storageConfig.safetyMarginMB,
+      ),
+    );
   }
 }

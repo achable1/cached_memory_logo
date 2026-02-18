@@ -53,24 +53,21 @@ class CachedMemoryLogo extends StatelessWidget {
         ),
         child: Builder(
           builder: (context) => CubitWidgetStateLoader<LogoCubit, LogoEntity>(
-            onSuccess: (data) {
-              if (data.base64Logo != null) {
-                return Image.memory(
-                  base64Decode(data.base64Logo!),
-                  errorBuilder: errorBuilder,
-                  height: height,
-                  width: width,
-                );
-              } else if (data.fileLogo != null) {
-                return Image.file(
-                  data.fileLogo!,
-                  errorBuilder: errorBuilder,
-                  height: height,
-                  width: width,
-                );
-              }
-              return const SizedBox.shrink();
-            },
+            onSuccess: (data) => data.fold(
+              (file) => Image.file(
+                file,
+                errorBuilder: errorBuilder,
+                height: height,
+                width: width,
+              ),
+              (base64) => Image.memory(
+                base64Decode(base64),
+                errorBuilder: errorBuilder,
+                height: height,
+                width: width,
+              ),
+              SizedBox.shrink,
+            ),
             onFailure: (error) =>
                 fallbackWidget ??
                 ColoredBox(
