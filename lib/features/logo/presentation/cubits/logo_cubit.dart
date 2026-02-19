@@ -7,7 +7,6 @@ import "../../../../core/services/logger/logger_service.dart";
 import "../../business/entities/dependencies/device_storage_validator.dart";
 import "../../business/entities/logo_entity.dart";
 import "../../business/repositories/logo_repository.dart";
-import "../../business/use_cases/get_or_refresh_logo.dart";
 import "../../business/use_cases/use_cases.dart";
 import "../../data/models/params/logo_params.dart";
 import "get_info_cubit.dart";

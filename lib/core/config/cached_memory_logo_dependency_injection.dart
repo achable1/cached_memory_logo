@@ -3,10 +3,8 @@ import "package:flutter/material.dart";
 import "package:get_it/get_it.dart";
 import "package:hive_ce_flutter/hive_flutter.dart";
 
-import "storage_config.dart";
 import "../../features/logo/business/entities/dependencies/device_storage_validator.dart";
 import "../../features/logo/business/entities/dependencies/device_storage_validator_impl.dart";
-
 import "../../features/logo/business/repositories/logo_repository.dart";
 import "../../features/logo/data/data_sources/local/logo_hive_data_source.dart";
 import "../../features/logo/data/data_sources/local/logo_local_data_source.dart";
@@ -17,6 +15,7 @@ import "../../features/logo/data/repositories/logo_repository_impl.dart";
 import "../services/hive/hive_boxes.dart";
 import "../services/hive/hive_registrar.g.dart";
 import "instances_names.dart";
+import "storage_config.dart";
 
 /// Class to inject the dependencies in the application
 class CachedMemoryLogoDependencyInjection {
