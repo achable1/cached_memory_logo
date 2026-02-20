@@ -2,10 +2,20 @@ import "package:auto_route/auto_route.dart";
 import "package:cached_memory_logo/features/logo/presentation/widgets/cached_memory_logo.dart";
 import "package:flutter/material.dart";
 
-/// Home page of the application
+import "../widgets/possible_components.dart";
+
+/// Home page of the application, The logos are displayed in a lazy loading 
+/// manner, meaning that they are only loaded when they are visible on the screen. This is achieved 
+/// using the [CachedMemoryLogo] widget, which caches the logos in memory and only loads them when 
+/// they are needed. This helps to improve the performance of the application and reduce the memory 
+/// usage.
 @RoutePage()
 class HomePage extends StatelessWidget {
-  /// Home page of the application
+  /// Home page of the application, The logos are displayed in a lazy loading 
+  /// manner, meaning that they are only loaded when they are visible on the screen. This is achieved 
+  /// using the [CachedMemoryLogo] widget, which caches the logos in memory and only loads them when 
+  /// they are needed. This helps to improve the performance of the application and reduce the memory 
+  /// usage.
   const HomePage({super.key});
 
   @override
@@ -13,91 +23,10 @@ class HomePage extends StatelessWidget {
         appBar: AppBar(
           title: const Text("Home"),
         ),
-        body: const Center(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  CachedMemoryLogo(
-                    path: "logos/7-eleven.png",
-                    height: 100,
-                    width: 100,
-                  ),
-                  SizedBox(height: 20),
-                  CachedMemoryLogo(
-                    path: "logos/7-eleven.png",
-                    height: 100,
-                    width: 100,
-                  ),
-                  SizedBox(height: 20),
-                  CachedMemoryLogo(
-                    path: "logos/mercado-pago.png",
-                    height: 100,
-                    width: 100,
-                  ),
-                  SizedBox(height: 20),
-                  CachedMemoryLogo(
-                    path: "logos/paypal.png",
-                    height: 100,
-                    width: 100,
-                  ),
-                  SizedBox(height: 20),
-                  CachedMemoryLogo(
-                    path: "logos/paypal.png",
-                    height: 100,
-                    width: 100,
-                  ),
-                  SizedBox(height: 20),
-                  CachedMemoryLogo(
-                    path: "logos/paypal.png",
-                    height: 100,
-                    width: 100,
-                  ),
-                  SizedBox(height: 20),
-                  CachedMemoryLogo(
-                    path: "logos/paypal.png",
-                    height: 100,
-                    width: 100,
-                  ),
-                  SizedBox(height: 20),
-                  CachedMemoryLogo(
-                    path: "logos/one-card.png",
-                    height: 100,
-                    width: 100,
-                  ),
-                  SizedBox(height: 20),
-                  CachedMemoryLogo(
-                    path: "logos/one-card.png",
-                    height: 100,
-                    width: 100,
-                  ),
-                  SizedBox(height: 20),
-                  CachedMemoryLogo(
-                    path: "logos/one-card.png",
-                    height: 100,
-                    width: 100,
-                  ),
-                  SizedBox(height: 20),
-                  CachedMemoryLogo(
-                    path: "logos/one-card.png",
-                    height: 100,
-                    width: 100,
-                  ),
-                  SizedBox(height: 20),
-                  CachedMemoryLogo(
-                    path: "logos/costco.png",
-                    height: 100,
-                    width: 100,
-                  ),
-                  SizedBox(height: 20),
-                  CachedMemoryLogo(
-                    path: "logos/another_test.png",
-                    height: 100,
-                    width: 100,
-                  ),
-                ],
-              ),
-            ),
+        body: ListView.separated(
+            itemCount: 100,
+            itemBuilder: (context, index) => possibleComponents[index % possibleComponents.length],
+            separatorBuilder: (context, index) => const SizedBox(height: 10),
           ),
         );
 }
