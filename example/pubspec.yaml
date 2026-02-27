@@ -22,7 +22,7 @@ dependencies:
   cached_memory_logo: 
       git:
         url: https://github.com/achable1/cached_memory_logo
-        ref: 0.1.9
+        ref: 0.2.0
 
 dev_dependencies:
   build_runner: ^2.4.11

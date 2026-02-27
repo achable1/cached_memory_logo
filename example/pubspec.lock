@@ -125,11 +125,11 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "0.1.9"
-      resolved-ref: "90aa3129a28dceb470419536beac88c4fa8ed400"
+      ref: "0.2.0"
+      resolved-ref: "7c9895e658222a974e17b13136aaa38029a3faa8"
       url: "https://github.com/achable1/cached_memory_logo"
     source: git
-    version: "0.1.9"
+    version: "0.2.0"
   characters:
     dependency: transitive
     description:
@@ -577,6 +577,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.0"
+  once:
+    dependency: transitive
+    description:
+      name: once
+      sha256: "8da5c52cacd3814b215ae89ec689a321b611f1904346e196bdd88c96206b2545"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.7.1"
   package_config:
     dependency: transitive
     description:
@@ -585,6 +593,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
+  package_info_plus:
+    dependency: transitive
+    description:
+      name: package_info_plus
+      sha256: f69da0d3189a4b4ceaeb1a3defb0f329b3b352517f52bed4290f83d4f06bc08d
+      url: "https://pub.dev"
+    source: hosted
+    version: "9.0.0"
+  package_info_plus_platform_interface:
+    dependency: transitive
+    description:
+      name: package_info_plus_platform_interface
+      sha256: "202a487f08836a592a6bd4f901ac69b3a8f146af552bbd14407b6b41e1c3f086"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.2.1"
   path:
     dependency: transitive
     description:
@@ -894,6 +918,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.3"
+  win32:
+    dependency: transitive
+    description:
+      name: win32
+      sha256: d7cb55e04cd34096cd3a79b3330245f54cb96a370a1c27adb3c84b917de8b08e
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.15.0"
   xdg_directories:
     dependency: transitive
     description:
