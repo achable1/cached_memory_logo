@@ -2,6 +2,7 @@ import "package:dio/dio.dart";
 import "package:flutter/material.dart";
 import "package:get_it/get_it.dart";
 import "package:hive_ce_flutter/hive_flutter.dart";
+import "package:once/once.dart";
 
 import "../../features/logo/business/entities/dependencies/device_storage_validator.dart";
 import "../../features/logo/business/entities/dependencies/device_storage_validator_impl.dart";
@@ -85,6 +86,9 @@ class CachedMemoryLogoDependencyInjection {
     try {
       await Hive.initFlutter();
       Hive.registerAdapters();
+      await Once.runOnEveryNewVersion(
+        callback: () async => Hive.deleteBoxFromDisk(logoBox),
+      );
       await Hive.openBox<LogoTable>(logoBox);
     } catch (e) {
       rethrow;
