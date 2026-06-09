@@ -1,6 +1,8 @@
-/// Configuration values for storage-related safeguards
+/// Configuration values for storage-related safeguards (needed to be implemented
+/// in all client apps)
 class StorageConfig {
-  /// Default tolerance date used when no saved date is present
+  /// Configuration values for storage-related safeguards (needed to be implemented
+  /// in all client apps)
   const StorageConfig({
     this.minFreeSpaceMB = 50,
     this.safetyMarginMB = 500,

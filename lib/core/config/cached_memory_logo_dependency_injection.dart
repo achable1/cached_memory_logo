@@ -2,7 +2,6 @@ import "package:dio/dio.dart";
 import "package:flutter/material.dart";
 import "package:get_it/get_it.dart";
 import "package:hive_ce_flutter/hive_flutter.dart";
-import "package:once/once.dart";
 
 import "../../features/logo/business/entities/dependencies/device_storage_validator.dart";
 import "../../features/logo/business/entities/dependencies/device_storage_validator_impl.dart";
@@ -13,38 +12,44 @@ import "../../features/logo/data/data_sources/remote/logo_remote_data_source.dar
 import "../../features/logo/data/data_sources/remote/mock/logo_remote_data_mock.dart";
 import "../../features/logo/data/models/tables/logo_table.dart";
 import "../../features/logo/data/repositories/logo_repository_impl.dart";
+import "../../package_init_params.dart";
+import "../services/hive/cached_memory_logo_adapters.dart";
 import "../services/hive/hive_boxes.dart";
-import "../services/hive/hive_registrar.g.dart";
 import "instances_names.dart";
 import "storage_config.dart";
 
 /// Class to inject the dependencies in the application
 class CachedMemoryLogoDependencyInjection {
   /// Inject the services in the application
-  static Future<void> init(
-    Dio dio,
-    Duration? toleranceRange, {
-    StorageConfig? storageConfig,
-    bool? isMock,
+  static Future<void> init({
+    required PackageInitParams params,
   }) async {
     WidgetsFlutterBinding.ensureInitialized();
 
-    if (isMock ?? false) {
+    if (params.isMock ?? false) {
       _registerMockRepositories(
-        toleranceRange: toleranceRange,
+        toleranceRange: params.toleranceRange,
         errorPercentage: 0,
         maxWaitTime: 1000,
       );
     } else {
-      _registerRemoteRepositories(dio, toleranceRange);
+      _registerRemoteRepositories(
+        dio: params.dio,
+      );
     }
-    await registerServices(toleranceRange, storageConfig: storageConfig);
+
+    await registerServices(
+      toleranceRange: params.toleranceRange,
+      config: StorageConfig(
+        minFreeSpaceMB: params.minFreeSpaceMB ?? 50,
+        safetyMarginMB: params.safetyMarginMB ?? 500,
+      ),
+    );
   }
 
-  static void _registerRemoteRepositories(
-    Dio dio,
-    Duration? toleranceRange,
-  ) {
+  static void _registerRemoteRepositories({
+    required Dio dio,
+  }) {
     GetIt.I.registerSingleton<LogoRepository>(
       LogoRepositoryImpl(
         localDataSource: LogoLocalDataSourceImpl(),
@@ -74,44 +79,37 @@ class CachedMemoryLogoDependencyInjection {
   }
 
   /// Registers the services for the application
-  static Future<void> registerServices(
-    Duration? toleranceRange, {
-    StorageConfig? storageConfig,
+  static Future<void> registerServices({
+    required StorageConfig config,
+    Duration? toleranceRange,
   }) async {
     await _hiveServices();
-    await _miscServices(toleranceRange, clientStorageConfig: storageConfig);
+    await _miscServices(
+      config: config,
+      toleranceRange: toleranceRange,
+    );
   }
 
   static Future _hiveServices() async {
-    try {
-      await Hive.initFlutter();
-      Hive.registerAdapters();
-      await Once.runOnEveryNewVersion(
-        callback: () async => Hive.deleteBoxFromDisk(logoBox),
-      );
-      await Hive.openBox<LogoTable>(logoBox);
-    } catch (e) {
-      rethrow;
-    }
+    await Hive.initFlutter("hive/cached_memory_logo");
+    await CachedMemoryLogoAdapters.init();
+    await Hive.openLazyBox<LogoTable>(
+      logoBox,
+    );
   }
 
-  static Future _miscServices(
-    Duration? toleranceRange, {
-    StorageConfig? clientStorageConfig,
+  static Future _miscServices({
+    required StorageConfig config,
+    Duration? toleranceRange,
   }) async {
     GetIt.I.registerSingleton<Duration>(
       toleranceRange ?? const Duration(days: 30),
       instanceName: InstancesNames.durationInstance,
     );
 
-    final storageConfig = clientStorageConfig ?? const StorageConfig();
-
-    GetIt.I.registerSingleton<StorageConfig>(storageConfig);
-
     GetIt.I.registerSingleton<DeviceStorageValidator>(
       DeviceStorageValidatorImpl(
-        minFreeSpaceMB: storageConfig.minFreeSpaceMB,
-        safetyMarginMB: storageConfig.safetyMarginMB,
+        config: config,
       ),
     );
   }

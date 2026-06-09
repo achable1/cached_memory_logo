@@ -1,6 +1,6 @@
 name: cached_memory_logo
 description: "A new Flutter package project."
-version: 0.2.1
+version: 0.2.2
 homepage:
 
 environment:
@@ -31,7 +31,6 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
-  hive_ce_generator: ^1.10.0
 
 flutter:
   uses-material-design: true

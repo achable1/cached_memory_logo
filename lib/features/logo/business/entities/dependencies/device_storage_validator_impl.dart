@@ -1,22 +1,18 @@
 import "package:disk_space_2/disk_space_2.dart";
 import "package:path_provider/path_provider.dart";
 
+import "../../../../../core/config/storage_config.dart";
 import "device_storage_validator.dart";
 
 /// Device storage validator helper for business logic processes
 class DeviceStorageValidatorImpl implements DeviceStorageValidator {
   /// Device storage validator helper for business logic processes
   const DeviceStorageValidatorImpl({
-    this.minFreeSpaceMB = 50,
-    this.safetyMarginMB = 500,
+    required this.config,
   });
   
-  /// Minimum free space in MB required (default 50 MB)
-  final double minFreeSpaceMB;
-
-  /// Safety margin in MB to account for system usage (default 500 MB)
-  final double safetyMarginMB;
-
+  /// Storage configuration parameter
+  final StorageConfig config;
 
   @override
   Future<bool> hasEnoughSpace(int requiredBytes) async {
@@ -30,7 +26,7 @@ class DeviceStorageValidatorImpl implements DeviceStorageValidator {
     // Convert required bytes to MB
     final requiredMB = requiredBytes / (1024 * 1024);
 
-    final neededMB = minFreeSpaceMB + requiredMB + safetyMarginMB;
+    final neededMB = config.minFreeSpaceMB + requiredMB + config.safetyMarginMB;
 
     return freeDeviceSpaceMB >= neededMB;
   }
