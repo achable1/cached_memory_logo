@@ -1,12 +1,14 @@
-import "package:hive_ce/hive_ce.dart";
+// GENERATED CODE - DO NOT MODIFY BY HAND
 
-import "../tables/logo_table.dart";
+part of 'hive_adapters.dart';
 
-/// Logo table adapter to be a custom data to save internally
-/// within hive data source
+// **************************************************************************
+// AdaptersGenerator
+// **************************************************************************
+
 class LogoTableAdapter extends TypeAdapter<LogoTable> {
   @override
-  int get typeId => 0;
+  final typeId = 0;
 
   @override
   LogoTable read(BinaryReader reader) {
@@ -14,11 +16,10 @@ class LogoTableAdapter extends TypeAdapter<LogoTable> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-
     return LogoTable(
       path: fields[0] as String,
-      saved: fields[3] as String,
       fileName: fields[4] as String,
+      saved: fields[3] as String,
     );
   }
 
@@ -33,4 +34,14 @@ class LogoTableAdapter extends TypeAdapter<LogoTable> {
       ..writeByte(4)
       ..write(obj.fileName);
   }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LogoTableAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }
