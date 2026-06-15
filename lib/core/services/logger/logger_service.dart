@@ -1,5 +1,6 @@
 import "dart:developer";
 
+import "package:hive_ce/hive.dart";
 import "package:logger/logger.dart";
 
 export "package:logger/logger.dart";
@@ -8,10 +9,20 @@ export "package:logger/logger.dart";
 ///
 /// Use this function to get a logger instance with the class name
 /// to easily identify the logs.
-Logger getLogger(String className) => Logger(
-      printer: _LoggerService(className),
-      output: _DeveloperConsoleOutput(),
-    );
+///
+/// Adapted to handle global hive logging
+Logger getLogger(String className) {
+  // Configure the overall logging level
+  HiveLogger.level = HiveLoggerLevel.error;
+
+  // Disable the unsafe isolate warning
+  HiveLogger.unsafeIsolateWarning = false;
+
+  return Logger(
+    printer: _LoggerService(className),
+    output: _DeveloperConsoleOutput(),
+  );
+}
 
 class _LoggerService extends LogPrinter {
   _LoggerService(this.className);
