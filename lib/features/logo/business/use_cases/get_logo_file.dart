@@ -7,7 +7,7 @@ import "../../../../core/errors/failure.dart";
 import "../repositories/logo_repository.dart";
 
 /// Use case to Gets a fileName with a path provided in the local device
-class GetLogoFile extends UseCaseAsync<File, String> {
+class GetLogoFile extends UseCase<File, String> {
   /// Use case to Gets a fileName with a path provided in the local device
   GetLogoFile({required this.logoRepository});
 
@@ -15,7 +15,7 @@ class GetLogoFile extends UseCaseAsync<File, String> {
   final LogoRepository logoRepository;
 
   @override
-  Future<Either<Failure, File>> call({
+  Either<Failure, File> call({
     required String params,
   }) => logoRepository.getLogoFile(fileName: params);
 }

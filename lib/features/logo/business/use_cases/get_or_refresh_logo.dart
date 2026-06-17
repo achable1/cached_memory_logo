@@ -6,8 +6,8 @@ import "package:fpdart/fpdart.dart";
 import "../../../../core/constants/classes/use_case.dart";
 import "../../../../core/errors/failure.dart";
 import "../../../../core/services/logger/logger_service.dart";
+import "../../data/models/objects/logo_object.dart";
 import "../../data/models/params/params.dart";
-import "../../data/models/tables/logo_table.dart";
 import "../entities/cached_logo_entity.dart";
 import "../entities/dependencies/device_storage_validator.dart";
 import "../entities/logo_entity.dart";
@@ -63,7 +63,7 @@ class GetOrRefreshLogo extends UseCaseAsync<LogoEntity, LogoParams> {
   }) async {
     final Logger logger = getLogger("GetLogo");
 
-    LogoTable? logoTable;
+    LogoObject? logoTable;
     File? file;
 
     final getLogoTable = await getLogoTableUseCase.call(
@@ -72,8 +72,7 @@ class GetOrRefreshLogo extends UseCaseAsync<LogoEntity, LogoParams> {
 
     getLogoTable.fold(
       (failure) {
-        logger
-            .f("GetLogoTable failure: ${failure.title}, ${failure.message}");
+        logger.f("GetLogoTable failure: ${failure.title}, ${failure.message}");
         return Left(failure);
       },
       (logoTableFolded) => logoTable = logoTableFolded,
@@ -87,6 +86,7 @@ class GetOrRefreshLogo extends UseCaseAsync<LogoEntity, LogoParams> {
     if (logoTable != null && cachedLogoEntity.isExpired()) {
       final deleteLogo = await deleteLogoUseCase.call(
         params: DeleteLogoParams(
+          id: logoTable?.id ?? 0,
           path: logoTable?.path,
           fileName: logoTable?.fileName,
         ),
@@ -163,8 +163,7 @@ class GetOrRefreshLogo extends UseCaseAsync<LogoEntity, LogoParams> {
 
       getLogoFile.fold(
         (failure) {
-          logger
-              .f("GetLogoFile failure: ${failure.title}, ${failure.message}");
+          logger.f("GetLogoFile failure: ${failure.title}, ${failure.message}");
           return Left(failure);
         },
         (fileFolded) => file = fileFolded,

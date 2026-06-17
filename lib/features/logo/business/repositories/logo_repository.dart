@@ -3,13 +3,13 @@ import "dart:io" show File;
 import "package:fpdart/fpdart.dart";
 
 import "../../../../core/errors/failure.dart";
+import "../../data/models/objects/logo_object.dart";
 import "../../data/models/params/params.dart";
-import "../../data/models/tables/logo_table.dart";
 
 /// Data operations for the Logo collection
 abstract class LogoRepository {
   /// Fetches the fileName metadata storaged of the logo
-  Future<Either<Failure, LogoTable?>> getLogoTable({
+  Future<Either<Failure, LogoObject?>> getLogoTable({
     required LogoParams params,
   });
 
@@ -29,12 +29,12 @@ abstract class LogoRepository {
   });
 
   /// Get logo file from fileName provided
-  Future<Either<Failure, File>> getLogoFile({
+  Either<Failure, File> getLogoFile({
     required String fileName,
   });
 
   /// Get logo path from fileName provided
-  Future<Either<Failure, String>> getLogoPath({
+  Either<Failure, String> getLogoPath({
     required String fileName,
   });
 

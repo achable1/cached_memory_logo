@@ -1,5 +1,9 @@
 targets:
   $default:
+    builders:
+      objectbox_generator:generator:
+        options:
+          output_dir: core/services/objectbox
     sources:
       - $package$
       - lib/**

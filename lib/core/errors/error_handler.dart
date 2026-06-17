@@ -39,15 +39,34 @@ class ErrorHandler {
   }
 
   /// Handles the exceptions that can be thrown in the application
-  /// during a cache call.
+  /// during a secure cache call.
   ///
-  /// It receives a [function] that is the cache call to be executed.
+  /// It receives a [function] that is the secure cache call to be executed.
   /// Returns an [Either] with the [Failure] or the [T] value.
-  static Future<Either<Failure, T>> handleCacheCall<T>(
+  static Future<Either<Failure, T>> handleFutureCacheCall<T>(
     Future<T> Function() function,
   ) async {
     try {
       return Right(await function());
+    } on CacheException catch (exception) {
+      return Left(AppFailure.cacheException(exception));
+    } catch (e) {
+      return Left(
+        AppFailure.unexpected(e.toString()),
+      );
+    }
+  }
+
+  /// Handles the exceptions that can be thrown in the application
+  /// during a cache call.
+  ///
+  /// It receives a [function] that is the cache call to be executed.
+  /// Returns an [Either] with the [Failure] or the [T] value.
+  static Either<Failure, T> handleCacheCall<T>(
+    T Function() function,
+  ) {
+    try {
+      return Right(function());
     } on CacheException catch (exception) {
       return Left(AppFailure.cacheException(exception));
     } catch (e) {

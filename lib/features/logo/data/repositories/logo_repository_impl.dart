@@ -6,19 +6,19 @@ import "../../../../core/errors/error_handler.dart";
 import "../../../../core/errors/failure.dart";
 import "../../../../core/services/connection/network_info.dart";
 import "../../business/repositories/logo_repository.dart";
-import "../data_sources/local/logo_hive_data_source.dart";
+import "../data_sources/local/logo_file_data_source.dart";
 import "../data_sources/local/logo_local_data_source.dart";
 import "../data_sources/remote/logo_remote_data_source.dart";
+import "../models/objects/logo_object.dart";
 import "../models/params/params.dart";
-import "../models/tables/logo_table.dart";
 
 /// Data operations for the Logo collection
 class LogoRepositoryImpl implements LogoRepository {
   /// Data operations for the Logo collection
   const LogoRepositoryImpl({
     required this.remoteDataSource,
-    required this.localDataSource,
-    required this.hiveDataSource,
+    required this.logoFileDataSource,
+    required this.logoLocalDataSource,
     this.networkInfo,
   });
 
@@ -26,20 +26,20 @@ class LogoRepositoryImpl implements LogoRepository {
   final LogoRemoteDataSource remoteDataSource;
 
   /// Hive data source for the Logo collection
-  final LogoHiveDataSource hiveDataSource;
+  final LogoLocalDataSource logoLocalDataSource;
 
   /// Local data source for the Logo collection
-  final LogoLocalDataSource localDataSource;
+  final LogoFileDataSource logoFileDataSource;
 
   /// Network information for the Logo collection
   final NetworkInfo? networkInfo;
 
   @override
-  Future<Either<Failure, LogoTable?>> getLogoTable({
+  Future<Either<Failure, LogoObject?>> getLogoTable({
     required LogoParams params,
   }) =>
-      ErrorHandler.handleCacheCall(
-        () async => hiveDataSource.getLogoTable(params.path),
+      ErrorHandler.handleFutureCacheCall(
+        () async => logoLocalDataSource.getLogoTable(params.path),
       );
 
   @override
@@ -56,13 +56,13 @@ class LogoRepositoryImpl implements LogoRepository {
   Future<Either<Failure, void>> saveLogo({
     required SaveLogoParams params,
   }) =>
-      ErrorHandler.handleCacheCall(
+      ErrorHandler.handleFutureCacheCall(
         () async {
-          final value = await localDataSource.saveLogoFromBase64(
+          final value = await logoFileDataSource.saveLogoFromBase64(
             bytes: params.bytes,
           );
-          await hiveDataSource.saveLogo(
-            LogoTable(
+          logoLocalDataSource.saveLogo(
+            LogoObject(
               path: params.path,
               fileName: value,
               saved: DateTime.now().toIso8601String(),
@@ -75,35 +75,35 @@ class LogoRepositoryImpl implements LogoRepository {
   Future<Either<Failure, void>> deleteLogo({
     required DeleteLogoParams params,
   }) =>
-      ErrorHandler.handleCacheCall(
+      ErrorHandler.handleFutureCacheCall(
         () async {
-          // Delete from filesystem FIRST, then from Hive to maintain sync
-          await localDataSource.deleteLogo(params.fileName);
-          await hiveDataSource.deleteLogo(params.path);
+          await logoFileDataSource.deleteLogo(params.fileName);
+          logoLocalDataSource.deleteLogo(params.id);
         },
       );
 
   @override
-  Future<Either<Failure, File>> getLogoFile({
+  Either<Failure, File> getLogoFile({
     required String fileName,
   }) =>
       ErrorHandler.handleCacheCall(
-        () => localDataSource.getLogoFile(fileName: fileName),
+        () => logoFileDataSource.getLogoFile(fileName: fileName),
       );
 
   @override
-  Future<Either<Failure, String>> getLogoPath({
+  Either<Failure, String> getLogoPath({
     required String fileName,
   }) =>
       ErrorHandler.handleCacheCall(
-        () => localDataSource.getLogoPath(fileName: fileName),
+        () => logoFileDataSource.getLogoPath(fileName: fileName),
       );
 
   @override
   Future<Either<Failure, void>> cleanupUnusedLogos({
     required Set<String> usedFileNames,
   }) =>
-      ErrorHandler.handleCacheCall(
-        () => localDataSource.cleanupUnusedLogos(usedFileNames: usedFileNames),
+      ErrorHandler.handleFutureCacheCall(
+        () =>
+            logoFileDataSource.cleanupUnusedLogos(usedFileNames: usedFileNames),
       );
 }

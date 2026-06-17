@@ -1,5 +1,5 @@
 import "../../../../../core/constants/classes/params.dart";
-import "../tables/logo_table.dart";
+import "../objects/logo_object.dart";
 
 /// Parameters used to make the Logo request.
 class LogoParams extends Params {
@@ -25,7 +25,7 @@ class LogoParams extends Params {
       };
 
   /// Converts the LogoParams to a LogoTable for save in local DB
-  LogoTable toTable(String fileName) => LogoTable(
+  LogoObject toTable(String fileName) => LogoObject(
         path: path,
         fileName: fileName,
         saved: DateTime.now().toIso8601String(),

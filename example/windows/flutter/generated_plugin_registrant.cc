@@ -8,10 +8,16 @@
 
 #include <connectivity_plus/connectivity_plus_windows_plugin.h>
 #include <disk_space_2/disk_space_2_plugin.h>
+#include <flutter_secure_storage_windows/flutter_secure_storage_windows_plugin.h>
+#include <objectbox_flutter_libs/objectbox_flutter_libs_plugin.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
   ConnectivityPlusWindowsPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("ConnectivityPlusWindowsPlugin"));
   DiskSpace_2PluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("DiskSpace_2Plugin"));
+  FlutterSecureStorageWindowsPluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("FlutterSecureStorageWindowsPlugin"));
+  ObjectboxFlutterLibsPluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("ObjectboxFlutterLibsPlugin"));
 }

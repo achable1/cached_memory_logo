@@ -1,5 +1,7 @@
+import "dart:io";
+
 import "package:disk_space_2/disk_space_2.dart";
-import "package:path_provider/path_provider.dart";
+import "package:get_it/get_it.dart";
 
 import "device_storage_validator.dart";
 
@@ -20,7 +22,7 @@ class DeviceStorageValidatorImpl implements DeviceStorageValidator {
 
   @override
   Future<bool> hasEnoughSpace(int requiredBytes) async {
-    final dir = await getApplicationDocumentsDirectory();
+    final dir = GetIt.I<Directory>();
     final freeDeviceSpaceMiB =
         await DiskSpace.getFreeDiskSpaceForPath(dir.path);
 

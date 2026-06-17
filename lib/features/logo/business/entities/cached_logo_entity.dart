@@ -1,4 +1,4 @@
-import "../../data/models/tables/logo_table.dart";
+import "../../data/models/objects/logo_object.dart";
 
 /// Cached logo entity for handle the logo table and tolerance range
 class CachedLogoEntity {
@@ -9,7 +9,7 @@ class CachedLogoEntity {
   });
 
   /// Logo table value
-  final LogoTable? data;
+  final LogoObject? data;
 
   /// Tolerance range data
   final Duration toleranceRange;

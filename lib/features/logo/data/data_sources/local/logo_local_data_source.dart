@@ -1,118 +1,46 @@
-import "dart:io" show Directory, File, Platform;
-import "dart:typed_data";
+import "../../../../../core/services/objectbox/objectbox.g.dart";
+import "../../models/objects/logo_object.dart";
 
-import "package:crypto/crypto.dart";
-import "package:path_provider/path_provider.dart";
-
-/// Local data source for the Logo Collection
+/// Hive data source for the Logo collection
 abstract class LogoLocalDataSource {
-  /// Saves within the device storage the base64 logo, returns the <code>fileName</code> value
-  Future<String> saveLogoFromBase64({
-    required Uint8List? bytes,
-  });
+  /// Fetches a logo by its path from the hive database.
+  Future<LogoObject?> getLogoTable(String path);
 
-  /// Retrieves the file from device storage from the <code>fileName</code>
-  Future<File> getLogoFile({
-    required String fileName,
-  });
+  /// Saves a logo to the Hive database.
+  int saveLogo(LogoObject logo);
 
-  /// Retrieves the logo path from the <code>fileName</code>
-  Future<String> getLogoPath({
-    required String fileName,
-  });
-
-  /// Deletes an local storaged logo from the <code>fileName</code>
-  Future<void> deleteLogo(String? fileName);
-
-  /// Clean up the unused logos files that doesn't are in a Set of <code>fileName</code>'s provided
-  Future<void> cleanupUnusedLogos({
-    required Set<String> usedFileNames,
-  });
+  /// Deletes a logo from the Hive database.
+  bool deleteLogo(int id);
 }
 
-/// Implementation of local data source for the Logo Collection
+/// Hive data source for the Logo collection
 class LogoLocalDataSourceImpl implements LogoLocalDataSource {
-  static const String _logoDir = "logos";
+  /// Hive data source for the Logo collection
+  LogoLocalDataSourceImpl({
+    required this.logoBox,
+  });
 
+  /// Logo box where logos are storaged in ObjectBox
+  final Box<LogoObject> logoBox;
+
+  /// Fetches a logo by its path from the Hive database.
   @override
-  Future<void> cleanupUnusedLogos({
-    required Set<String> usedFileNames,
-  }) async {
-    final appDir = await getApplicationDocumentsDirectory();
-    final logoPath = Directory("${appDir.path}/$_logoDir");
+  Future<LogoObject?> getLogoTable(String path) async {
+    final query = (logoBox.query(LogoObject_.path.equals(path))
+          ..order(LogoObject_.path))
+        .build();
+    final results = query.find();
+    final logoObject = results.first;
+    query.close();
 
-    if (!await logoPath.exists()) {
-      return;
-    }
-
-    await for (final entity in logoPath.list()) {
-      if (entity is! File) {
-        continue;
-      }
-
-      final fileName = entity.path.split(Platform.pathSeparator).last;
-
-      if (!usedFileNames.contains(fileName)) {
-        await entity.delete();
-      }
-    }
+    return logoObject;
   }
 
+  /// Saves a logo within the local database.
   @override
-  Future<void> deleteLogo(String? fileName) async {
-    if (fileName == null || fileName.isEmpty) {
-      return;
-    }
+  int saveLogo(LogoObject logo) => logoBox.put(logo);
 
-    try {
-      final file = await getLogoFile(fileName: fileName);
-      if (await file.exists()) {
-        await file.delete();
-      }
-    // ignore: empty_catches
-    } catch (e) {}
-  }
-
+  /// Deletes a logo within the local database.
   @override
-  Future<File> getLogoFile({
-    required String fileName,
-  }) async {
-    final appDir = await getApplicationDocumentsDirectory();
-    return File("${appDir.path}/$_logoDir/$fileName");
-  }
-
-  @override
-  Future<String> getLogoPath({
-    required String fileName,
-  }) async {
-    final logo = await getLogoFile(fileName: fileName);
-    return logo.path;
-  }
-
-  @override
-  Future<String> saveLogoFromBase64({
-    required Uint8List? bytes,
-  }) async {
-    if (bytes == null) {
-      return "";
-    }
-
-    final hash = sha256.convert(bytes).toString();
-    final fileName = "$hash.png";
-
-    final appDir = await getApplicationDocumentsDirectory();
-    final logoPath = Directory("${appDir.path}/$_logoDir");
-
-    if (!await logoPath.exists()) {
-      await logoPath.create(recursive: true);
-    }
-
-    final file = File("${logoPath.path}/$fileName");
-
-    if (!await file.exists()) {
-      await file.writeAsBytes(bytes);
-    }
-
-    return fileName;
-  }
+  bool deleteLogo(int id) => logoBox.remove(id);
 }
