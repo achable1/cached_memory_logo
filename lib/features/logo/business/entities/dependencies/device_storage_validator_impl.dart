@@ -19,7 +19,6 @@ class DeviceStorageValidatorImpl implements DeviceStorageValidator {
   /// Safety margin in MB to account for system usage (default 500 MB)
   final double safetyMarginMB;
 
-
   @override
   Future<bool> hasEnoughSpace(int requiredBytes) async {
     final dir = GetIt.I<Directory>();

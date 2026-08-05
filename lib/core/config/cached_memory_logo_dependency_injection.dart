@@ -16,7 +16,7 @@ import "../../features/logo/data/data_sources/remote/mock/logo_remote_data_mock.
 import "../../features/logo/data/models/objects/logo_object.dart";
 import "../../features/logo/data/repositories/logo_repository_impl.dart";
 import "../services/logger/logger_service.dart";
-import "../services/objectbox/objectbox_config.dart";
+import "../services/objectbox/objectbox.dart";
 import "instances_names.dart";
 import "storage_config.dart";
 
