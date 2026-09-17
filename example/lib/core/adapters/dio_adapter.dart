@@ -1,5 +1,6 @@
 import "dart:async";
 
+import "package:cached_memory_logo/core/services/connection/network_info.dart";
 import "package:dio/dio.dart";
 import "package:dio/io.dart";
 import "package:flutter/foundation.dart";
@@ -7,7 +8,6 @@ import "package:flutter_pretty_dio_logger/flutter_pretty_dio_logger.dart";
 
 import "../errors/connection/http_call_exception.dart";
 import "../extensions/num_extension.dart";
-import "../services/connection/network_info.dart";
 
 /// Adapter for the Dio client
 ///

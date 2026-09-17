@@ -4,7 +4,6 @@ import "package:fpdart/fpdart.dart" show Either;
 
 import "../../../../core/errors/error_handler.dart";
 import "../../../../core/errors/failure.dart";
-import "../../../../core/services/connection/network_info.dart";
 import "../../business/repositories/logo_repository.dart";
 import "../data_sources/local/logo_file_data_source.dart";
 import "../data_sources/local/logo_local_data_source.dart";
@@ -19,7 +18,6 @@ class LogoRepositoryImpl implements LogoRepository {
     required this.remoteDataSource,
     required this.logoFileDataSource,
     required this.logoLocalDataSource,
-    this.networkInfo,
   });
 
   /// Remote data source for the Logo collection
@@ -30,9 +28,6 @@ class LogoRepositoryImpl implements LogoRepository {
 
   /// Local data source for the Logo collection
   final LogoFileDataSource logoFileDataSource;
-
-  /// Network information for the Logo collection
-  final NetworkInfo? networkInfo;
 
   @override
   Future<Either<Failure, LogoObject?>> getLogoTable({
