@@ -27,14 +27,17 @@ class CachedMemoryLogoDependencyInjection {
 
   /// Inject the services in the application
   static Future<void> init(
-    Dio dio,
+    Dio? dio,
     Duration? toleranceRange, {
     StorageConfig? storageConfig,
     bool? isMock,
   }) async {
     WidgetsFlutterBinding.ensureInitialized();
 
-    await registerServices(toleranceRange, storageConfig: storageConfig);
+    await registerServices(
+      toleranceRange,
+      storageConfig: storageConfig,
+    );
 
     if (isMock ?? false) {
       _registerMockRepositories(
@@ -43,7 +46,7 @@ class CachedMemoryLogoDependencyInjection {
         maxWaitTime: 1000,
       );
     } else {
-      _registerRemoteRepositories(dio, toleranceRange);
+      _registerRemoteRepositories(dio!, toleranceRange);
     }
   }
 
