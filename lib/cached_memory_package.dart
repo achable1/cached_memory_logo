@@ -14,13 +14,8 @@ class CachedMemoryPackage {
     bool? isMock,
   }) async {
     assert(
-      dio != null && isMock == null,
-      "If mock mode is null, then dio adapter needed",
-    );
-
-    assert(
-      dio == null && isMock != null,
-      "If dio adapter is null, mock flag must be provided",
+      (dio == null && (isMock ?? false)) || (dio != null && isMock == null),
+      "Provide either isMock: true or dio, but not both.",
     );
 
     await CachedMemoryLogoDependencyInjection.init(

@@ -4,17 +4,17 @@ import "package:flutter/material.dart";
 
 import "../widgets/possible_components.dart";
 
-/// Home page of the application, The logos are displayed in a lazy loading 
-/// manner, meaning that they are only loaded when they are visible on the screen. This is achieved 
-/// using the [CachedMemoryLogo] widget, which caches the logos in memory and only loads them when 
-/// they are needed. This helps to improve the performance of the application and reduce the memory 
+/// Home page of the application, The logos are displayed in a lazy loading
+/// manner, meaning that they are only loaded when they are visible on the screen. This is achieved
+/// using the [CachedMemoryLogo] widget, which caches the logos in memory and only loads them when
+/// they are needed. This helps to improve the performance of the application and reduce the memory
 /// usage.
 @RoutePage()
 class HomePage extends StatelessWidget {
-  /// Home page of the application, The logos are displayed in a lazy loading 
-  /// manner, meaning that they are only loaded when they are visible on the screen. This is achieved 
-  /// using the [CachedMemoryLogo] widget, which caches the logos in memory and only loads them when 
-  /// they are needed. This helps to improve the performance of the application and reduce the memory 
+  /// Home page of the application, The logos are displayed in a lazy loading
+  /// manner, meaning that they are only loaded when they are visible on the screen. This is achieved
+  /// using the [CachedMemoryLogo] widget, which caches the logos in memory and only loads them when
+  /// they are needed. This helps to improve the performance of the application and reduce the memory
   /// usage.
   const HomePage({super.key});
 
@@ -24,7 +24,7 @@ class HomePage extends StatelessWidget {
           title: const Text("Home"),
         ),
         body: ListView.separated(
-            itemCount: 100,
+            itemCount: 10,
             itemBuilder: (context, index) => possibleComponents[index % possibleComponents.length],
             separatorBuilder: (context, index) => const SizedBox(height: 10),
           ),

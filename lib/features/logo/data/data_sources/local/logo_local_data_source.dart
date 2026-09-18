@@ -29,11 +29,12 @@ class LogoLocalDataSourceImpl implements LogoLocalDataSource {
     final query = (logoBox.query(LogoObject_.path.equals(path))
           ..order(LogoObject_.path))
         .build();
-    final results = query.find();
-    final logoObject = results.first;
-    query.close();
-
-    return logoObject;
+    try {
+      final results = query.find();
+      return results.isEmpty ? null : results.first;
+    } finally {
+      query.close();
+    }
   }
 
   /// Saves a logo within the local database.

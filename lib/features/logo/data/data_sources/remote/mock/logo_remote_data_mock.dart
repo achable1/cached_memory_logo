@@ -24,7 +24,7 @@ class LogoRemoteDataMock extends MockDataSource
       "logos/mercado-pago.png" => LogoMockStrings.mercadoPago,
       "logos/paypal.png" => LogoMockStrings.payPal,
       "logos/one-card.png" => LogoMockStrings.oneCard,
-      _ => LogoMockStrings.defaultGenericLogo
+      _ => LogoMockStrings.legoBrick
     };
 
     return base64Logo;

@@ -61,7 +61,7 @@ class GetOrRefreshLogo extends UseCaseAsync<LogoEntity, LogoParams> {
   Future<Either<Failure, LogoEntity>> call({
     required LogoParams params,
   }) async {
-    final Logger logger = getLogger("GetLogo");
+    final Logger logger = getLogger("GetOrRefreshLogo");
 
     LogoObject? logoTable;
     File? file;
@@ -70,13 +70,19 @@ class GetOrRefreshLogo extends UseCaseAsync<LogoEntity, LogoParams> {
       params: params,
     );
 
+    Failure? failure;
+
     getLogoTable.fold(
-      (failure) {
-        logger.f("GetLogoTable failure: ${failure.title}, ${failure.message}");
-        return Left(failure);
+      (value) {
+        failure = value;
+        logger.f("GetLogoTable failure: ${value.title}, ${value.message}");
       },
       (logoTableFolded) => logoTable = logoTableFolded,
     );
+
+    if (failure != null) {
+      return Left(failure!);
+    }
 
     final cachedLogoEntity = CachedLogoEntity(
       data: logoTable,
@@ -118,15 +124,20 @@ class GetOrRefreshLogo extends UseCaseAsync<LogoEntity, LogoParams> {
         params: params,
       );
 
+      failure = null;
       getBase64.fold(
-        (failure) {
+        (value) {
+          failure = value;
           logger.f(
-            "GetBase64Logo failure: ${failure.title}, ${failure.message}",
+            "GetBase64Logo failure: ${value.title}, ${value.message}",
           );
-          return Left(failure);
         },
         (base64LogoFolded) => base64Logo = base64LogoFolded,
       );
+
+      if (failure != null) {
+        return Left(failure!);
+      }
 
       final decodedBytes = base64Decode(base64Logo!);
 
@@ -145,29 +156,38 @@ class GetOrRefreshLogo extends UseCaseAsync<LogoEntity, LogoParams> {
       );
 
       saveLogo.fold(
-        (failure) {
-          logger.f("SaveLogo failure: ${failure.title}, ${failure.message}");
-          return Left(failure);
+        (value) {
+          failure = value;
+          logger.f("SaveLogo failure: ${value.title}, ${value.message}");
         },
         (voidActionResult) {
           logger.i("SaveLogo success!");
         },
       );
 
+      if (failure != null) {
+        return Left(failure!);
+      }
+
       logger.d("GetLogo base64Logo returned");
       return Right(LogoEntity(base64Logo: base64Logo));
     } else {
-      final getLogoFile = await getLogoFileUseCase.call(
+      final getLogoFile = getLogoFileUseCase.call(
         params: logoTable!.fileName,
       );
 
+      failure = null;
       getLogoFile.fold(
-        (failure) {
-          logger.f("GetLogoFile failure: ${failure.title}, ${failure.message}");
-          return Left(failure);
+        (value) {
+          failure = value;
+          logger.f("GetLogoFile failure: ${value.title}, ${value.message}");
         },
         (fileFolded) => file = fileFolded,
       );
+
+      if (failure != null) {
+        return Left(failure!);
+      }
 
       if (file != null) {
         logger.i("GetLogoFile local fileLogo returned");
